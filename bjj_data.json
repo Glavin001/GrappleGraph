@@ -1,0 +1,339 @@
+{
+  "positions": [
+    {
+      "id": "standing",
+      "name": "Standing",
+      "aliases": ["Neutral", "On the Feet"],
+      "category": "Neutral",
+      "description": "Both practitioners are on their feet, typically seeking grips and takedowns.",
+      "attributes": {
+        "advantage": "Neutral",
+        "common_goals_top": ["Takedown", "Clinch"],
+        "common_goals_bottom": ["Takedown", "Clinch", "Pull Guard"]
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": null
+      },
+      "moves_from_here": [
+        "double_leg_takedown",
+        "guard_pull"
+      ],
+      "transitions_to": [
+        {"move_id": "double_leg_takedown", "target_position_id": "side_control"},
+        {"move_id": "guard_pull", "target_position_id": "closed_guard"}
+      ]
+    },
+    {
+      "id": "closed_guard",
+      "name": "Closed Guard",
+      "aliases": ["Full Guard"],
+      "category": "Guard",
+      "description": "Bottom practitioner has their legs wrapped around the top practitioner's torso with ankles closed. Offers strong control for the bottom person.",
+      "attributes": {
+        "advantage": "Bottom (Control)",
+        "common_goals_top": ["Pass Guard", "Maintain Posture"],
+        "common_goals_bottom": ["Sweep", "Submit", "Stand Up", "Open Guard"]
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": "https://www.youtube.com/watch?v=JJcqGFk Blom"
+      },
+      "moves_from_here": [
+        "armbar_from_closed_guard",
+        "kimura_from_closed_guard",
+        "scissor_sweep"
+      ],
+      "transitions_to": [
+        {"move_id": "scissor_sweep", "target_position_id": "mount"}
+        // Transitions resulting from opponent passing will be moves originating from here but ending elsewhere
+      ]
+    },
+    {
+      "id": "half_guard",
+      "name": "Half Guard",
+      "aliases": [],
+      "category": "Guard",
+      "description": "Bottom practitioner controls one of the top practitioner's legs between both of their legs. A versatile position with many variations.",
+      "attributes": {
+        "advantage": "Neutral / Varies",
+        "common_goals_top": ["Pass Guard", "Improve to Mount/Side Control"],
+        "common_goals_bottom": ["Sweep", "Submit", "Regain Full Guard", "Take the Back"]
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": null
+      },
+      "moves_from_here": [],
+      "transitions_to": []
+    },
+    {
+      "id": "open_guard",
+      "name": "Open Guard",
+      "aliases": [],
+      "category": "Guard",
+      "description": "Bottom practitioner uses legs actively against the top practitioner without closing ankles. Includes many sub-types like Butterfly, Spider, De La Riva, Lasso, etc.",
+      "attributes": {
+        "advantage": "Neutral / Varies",
+        "common_goals_top": ["Pass Guard"],
+        "common_goals_bottom": ["Sweep", "Submit", "Maintain Distance"]
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": null
+      },
+      "moves_from_here": [],
+      "transitions_to": []
+    },
+    {
+      "id": "side_control",
+      "name": "Side Control",
+      "aliases": ["Side Mount"],
+      "category": "Top Control",
+      "description": "Top practitioner is perpendicular to the bottom practitioner, controlling chest-to-chest. Bottom practitioner's back is on the mat.",
+      "attributes": {
+        "advantage": "Top",
+        "common_goals_top": ["Maintain Control", "Submit", "Transition to Mount/Knee-on-Belly/North-South"],
+        "common_goals_bottom": ["Escape", "Reguard", "Create Space"]
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": null
+      },
+      "moves_from_here": [],
+      "transitions_to": []
+    },
+    {
+      "id": "mount",
+      "name": "Mount",
+      "aliases": ["Full Mount"],
+      "category": "Top Control",
+      "description": "Top practitioner sits astride the bottom practitioner's torso, facing their head. Highly dominant position.",
+      "attributes": {
+        "advantage": "Top",
+        "common_goals_top": ["Maintain Control", "Submit", "Take the Back (if opponent turns)"],
+        "common_goals_bottom": ["Escape", "Reguard"]
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": null
+      },
+      "moves_from_here": [
+        "americana_from_mount",
+        "armbar_from_mount"
+      ],
+      "transitions_to": [] // Escapes are moves originating here but targetting other positions
+    },
+    {
+      "id": "back_control",
+      "name": "Back Control",
+      "aliases": ["Back Mount", "Taking the Back"],
+      "category": "Top Control",
+      "description": "Practitioner is behind the opponent, typically with legs hooked around opponent's waist/thighs (hooks) and arms controlling the upper body (seatbelt grip). Most dominant position.",
+      "attributes": {
+        "advantage": "Top",
+        "common_goals_top": ["Maintain Control", "Submit (Chokes)"],
+        "common_goals_bottom": ["Escape", "Prevent Choke"]
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": null
+      },
+      "moves_from_here": [
+        "rear_naked_choke"
+      ],
+      "transitions_to": []
+    },
+    {
+      "id": "knee_on_belly",
+      "name": "Knee on Belly",
+      "aliases": ["Knee Mount", "Knee Ride"],
+      "category": "Top Control",
+      "description": "Top practitioner places one knee on the opponent's belly/sternum, using it to apply pressure and control while maintaining mobility.",
+      "attributes": {
+        "advantage": "Top",
+        "common_goals_top": ["Maintain Control", "Submit", "Transition to Mount/Side Control"],
+        "common_goals_bottom": ["Escape", "Reguard"]
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": null
+      },
+      "moves_from_here": [],
+      "transitions_to": []
+    },
+    {
+      "id": "turtle",
+      "name": "Turtle",
+      "aliases": [],
+      "category": "Transitional / Defensive",
+      "description": "Practitioner is balled up on hands and knees/elbows, protecting their front and neck. Often a temporary position during transitions or escapes.",
+      "attributes": {
+        "advantage": "Top (Attacking)",
+        "common_goals_top": ["Take the Back", "Break Down Turtle", "Submit"],
+        "common_goals_bottom": ["Escape", "Reguard", "Stand Up"]
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": null
+      },
+      "moves_from_here": [],
+      "transitions_to": []
+    }
+  ],
+  "moves": [
+    {
+      "id": "double_leg_takedown",
+      "name": "Double Leg Takedown",
+      "type": "Takedown",
+      "origin_position_id": "standing",
+      "target_position_id": "side_control", // Often results in Side Control or opponent's guard
+      "description": "Shoot in, grab both opponent legs, and drive through to take them down.",
+      "attributes": {
+        "difficulty": "Beginner / Intermediate",
+        "requirements": ["Speed", "Level Change"],
+        "common_counters": ["Sprawl", "Guillotine Choke"],
+        "setup_details": "Often set up by hand fighting or feints.",
+        "gi_specific": false
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": "https://www.youtube.com/watch?v=ixqtDrQ9j6k"
+      }
+    },
+    {
+      "id": "guard_pull",
+      "name": "Guard Pull",
+      "type": "Transition",
+      "origin_position_id": "standing",
+      "target_position_id": "closed_guard", // Can also target open guard variations
+      "description": "Establish grips and deliberately sit down, pulling the opponent into guard.",
+      "attributes": {
+        "difficulty": "Beginner",
+        "requirements": ["Grips"],
+        "common_counters": ["Takedown during pull", "Immediate pass attempt"],
+        "setup_details": "Used to engage grappling on the ground, avoiding takedown battle.",
+        "gi_specific": null // Common in both, but grips differ
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": "https://www.youtube.com/watch?v=5tN8MCkN9W8"
+      }
+    },
+    {
+      "id": "armbar_from_closed_guard",
+      "name": "Armbar (from Closed Guard)",
+      "type": "Submission",
+      "origin_position_id": "closed_guard",
+      "target_position_id": "closed_guard", // Submission finishes in the same position
+      "description": "Isolate an arm, control posture, pivot hips, and extend the opponent's arm over the hips for a hyperextension lock.",
+      "attributes": {
+        "difficulty": "Beginner / Intermediate",
+        "requirements": ["Hip Mobility", "Posture Control"],
+        "common_counters": ["Stacking", "Pulling Arm Out", "Hitchhiker Escape"],
+        "setup_details": "Often set up by breaking opponent's posture.",
+        "gi_specific": null
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": "https://www.youtube.com/watch?v=JJcqGFk Blom" // Same as closed guard for now, need specific video
+      }
+    },
+    {
+      "id": "kimura_from_closed_guard",
+      "name": "Kimura (from Closed Guard)",
+      "type": "Submission",
+      "origin_position_id": "closed_guard",
+      "target_position_id": "closed_guard",
+      "description": "Isolate an arm, secure a figure-four grip, break posture, and rotate the arm internally.",
+      "attributes": {
+        "difficulty": "Beginner / Intermediate",
+        "requirements": ["Grip Strength", "Posture Control"],
+        "common_counters": ["Straightening Arm", "Grabbing own Belt/Gi", "Rolling"],
+        "setup_details": "Often available when opponent posts hand on the mat.",
+        "gi_specific": null
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": "https://www.youtube.com/watch?v=4pjZoZx_d4g"
+      }
+    },
+    {
+      "id": "scissor_sweep",
+      "name": "Scissor Sweep",
+      "type": "Sweep",
+      "origin_position_id": "closed_guard",
+      "target_position_id": "mount", // Successful sweep usually lands in Mount
+      "description": "Break posture, establish collar and sleeve grip, shrimp hips out, place one shin across opponent's belly (like scissors), chop opponent's base leg while pulling/driving.",
+      "attributes": {
+        "difficulty": "Beginner",
+        "requirements": ["Timing", "Hip Movement"],
+        "common_counters": ["Maintaining Strong Base", "Posture Up", "Stepping over bottom leg"],
+        "setup_details": "Requires breaking opponent's posture forward.",
+        "gi_specific": true // Relies heavily on Gi grips
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": "https://www.youtube.com/watch?v=zNQE4c35H9Y"
+      }
+    },
+    {
+      "id": "americana_from_mount",
+      "name": "Americana (from Mount)",
+      "type": "Submission",
+      "origin_position_id": "mount",
+      "target_position_id": "mount",
+      "description": "Isolate an arm bent near the head, use a figure-four grip (wrist control + under elbow), slide opponent's elbow down towards their hip while lifting the wrist ('paint the mat').",
+      "attributes": {
+        "difficulty": "Beginner",
+        "requirements": ["Wrist Control"],
+        "common_counters": ["Straightening Arm", "Turning into opponent"],
+        "setup_details": "Often available when opponent pushes on chest/neck from mount.",
+        "gi_specific": null
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": "https://www.youtube.com/watch?v=sA75IApL0Gk"
+      }
+    },
+    {
+      "id": "armbar_from_mount",
+      "name": "Armbar (from Mount)",
+      "type": "Submission",
+      "origin_position_id": "mount",
+      "target_position_id": "mount", // Sometimes transitions off to side if opponent escapes badly
+      "description": "Isolate an arm, transition to S-Mount or high mount, slide leg over opponent's head, control head and arm, fall back extending the hips.",
+      "attributes": {
+        "difficulty": "Intermediate",
+        "requirements": ["Balance", "Hip Mobility"],
+        "common_counters": ["Stacking", "Hitchhiker Escape", "Pulling Arm Out"],
+        "setup_details": "Requires isolating an arm, often when opponent pushes or frames.",
+        "gi_specific": null
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": "https://www.youtube.com/watch?v=DhhOLuu6m3g"
+      }
+    },
+     {
+      "id": "rear_naked_choke",
+      "name": "Rear Naked Choke (RNC)",
+      "type": "Submission",
+      "origin_position_id": "back_control",
+      "target_position_id": "back_control",
+      "description": "From back control, one arm goes under the chin across the neck, bicep of that arm is grabbed by the other hand which goes behind opponent's head/neck. Squeeze for blood choke.",
+      "attributes": {
+        "difficulty": "Beginner / Intermediate", // Easy concept, hard execution vs defense
+        "requirements": ["Getting arm under chin", "Secure Grip"],
+        "common_counters": ["Hand Fighting / Chin Tucking", "Turning into the choke"],
+        "setup_details": "Requires established back control, often fighting hands to secure.",
+        "gi_specific": false
+      },
+      "visuals": {
+        "image_url": null,
+        "video_url": "https://www.youtube.com/watch?v=jbwgMkCy3RA"
+      }
+    }
+    // Add escapes like Elbow-Knee Escape from Mount here...
+  ]
+} 
