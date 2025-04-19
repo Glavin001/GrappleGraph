@@ -159,6 +159,21 @@ const TECHNIQUES = {
   // Half Guard (Top)
   HG_TOP_KNEE_CUT_PASS: 'half-guard-top-knee-cut-pass',
   HG_TOP_CROSSFACE_UNDERHOOK_CONTROL: 'half-guard-top-crossface-underhook-control',
+  // Placeholder Techniques for Connectivity
+  KESAGATAME_BOTTOM_ESCAPE: 'kesagatame-bottom-escape',
+  NORTH_SOUTH_BOTTOM_ESCAPE: 'north-south-bottom-escape',
+  BODY_TRIANGLE_BOTTOM_ESCAPE: 'body-triangle-bottom-escape',
+  DEEP_HALF_GUARD_BOTTOM_SWEEP: 'deep-half-guard-bottom-sweep',
+  DEEP_HALF_GUARD_TOP_PASS: 'deep-half-guard-top-pass',
+  Z_GUARD_BOTTOM_SWEEP: 'z-guard-bottom-sweep',
+  Z_GUARD_TOP_PASS: 'z-guard-top-pass',
+  SPIDER_GUARD_BOTTOM_SWEEP: 'spider-guard-bottom-sweep',
+  SPIDER_GUARD_TOP_PASS: 'spider-guard-top-pass',
+  DE_LA_RIVA_GUARD_BOTTOM_SWEEP: 'de-la-riva-guard-bottom-sweep',
+  DE_LA_RIVA_GUARD_TOP_PASS: 'de-la-riva-guard-top-pass',
+  REVERSE_DE_LA_RIVA_GUARD_BOTTOM_SWEEP: 'reverse-de-la-riva-guard-bottom-sweep',
+  REVERSE_DE_LA_RIVA_GUARD_TOP_PASS: 'reverse-de-la-riva-guard-top-pass',
+  BUTTERFLY_GUARD_TOP_PASS: 'butterfly-guard-top-pass',
 } as const;
 
 // --- Derive concrete types from constants ---
@@ -405,6 +420,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       isVariant: true,
       applicableTechniqueIds: [
         // Add specific Kesa escapes
+        TECHNIQUES.KESAGATAME_BOTTOM_ESCAPE,
       ],
       inversePositionId: POSITIONS.KESAGATAME_TOP,
     },
@@ -429,6 +445,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       isVariant: true,
       applicableTechniqueIds: [
         // Add N/S escapes
+        TECHNIQUES.NORTH_SOUTH_BOTTOM_ESCAPE,
       ],
       inversePositionId: POSITIONS.NORTH_SOUTH_TOP,
     },
@@ -487,6 +504,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       isVariant: true,
       applicableTechniqueIds: [
         // Specific escapes targeting the triangle lock
+        TECHNIQUES.BODY_TRIANGLE_BOTTOM_ESCAPE,
       ],
       inversePositionId: POSITIONS.BODY_TRIANGLE_TOP,
     },
@@ -590,6 +608,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         isVariant: true,
         applicableTechniqueIds: [
           // Add Deep Half sweeps (Waiter Sweep, Homer Simpson)
+          TECHNIQUES.DEEP_HALF_GUARD_BOTTOM_SWEEP,
         ],
         inversePositionId: POSITIONS.DEEP_HALF_GUARD_TOP,
       },
@@ -603,6 +622,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         isVariant: true,
         applicableTechniqueIds: [
           // Add passes vs Deep Half, back takes
+          TECHNIQUES.DEEP_HALF_GUARD_TOP_PASS,
         ],
         inversePositionId: POSITIONS.DEEP_HALF_GUARD_BOTTOM,
       },
@@ -616,6 +636,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         isVariant: true,
         applicableTechniqueIds: [
           // Add Z-Guard sweeps, transitions to other guards
+          TECHNIQUES.Z_GUARD_BOTTOM_SWEEP,
         ],
         inversePositionId: POSITIONS.Z_GUARD_TOP,
       },
@@ -629,6 +650,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         isVariant: true,
         applicableTechniqueIds: [
           // Add passes vs Z-Guard (e.g., windshield wiper)
+          TECHNIQUES.Z_GUARD_TOP_PASS,
         ],
         inversePositionId: POSITIONS.Z_GUARD_BOTTOM,
       },
@@ -663,6 +685,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         isVariant: true,
         applicableTechniqueIds: [
           // Add Spider Guard sweeps, triangle, omoplata
+          TECHNIQUES.SPIDER_GUARD_BOTTOM_SWEEP,
         ],
         inversePositionId: POSITIONS.SPIDER_GUARD_TOP,
       },
@@ -676,6 +699,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         isVariant: true,
         applicableTechniqueIds: [
           // Add Spider Guard passes
+          TECHNIQUES.SPIDER_GUARD_TOP_PASS,
         ],
         inversePositionId: POSITIONS.SPIDER_GUARD_BOTTOM,
       },
@@ -689,6 +713,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         isVariant: true,
         applicableTechniqueIds: [
           // Add DLR sweeps, back takes, Berimbolo
+          TECHNIQUES.DE_LA_RIVA_GUARD_BOTTOM_SWEEP,
         ],
         inversePositionId: POSITIONS.DE_LA_RIVA_GUARD_TOP,
       },
@@ -702,6 +727,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         isVariant: true,
         applicableTechniqueIds: [
           // Add DLR passes (e.g., Leg Drag, Knee Cut variation)
+          TECHNIQUES.DE_LA_RIVA_GUARD_TOP_PASS,
         ],
         inversePositionId: POSITIONS.DE_LA_RIVA_GUARD_BOTTOM,
       },
@@ -715,6 +741,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         isVariant: true,
         applicableTechniqueIds: [
           // Add RDLR sweeps, K-Guard entries
+          TECHNIQUES.REVERSE_DE_LA_RIVA_GUARD_BOTTOM_SWEEP,
         ],
         inversePositionId: POSITIONS.REVERSE_DE_LA_RIVA_GUARD_TOP,
       },
@@ -728,6 +755,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         isVariant: true,
         applicableTechniqueIds: [
           // Add RDLR passes
+          TECHNIQUES.REVERSE_DE_LA_RIVA_GUARD_TOP_PASS,
         ],
         inversePositionId: POSITIONS.REVERSE_DE_LA_RIVA_GUARD_BOTTOM,
       },
@@ -757,6 +785,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         advantage: 'Neutral', // Opportunity to pass, risk of sweep
         applicableTechniqueIds: [
           // TODO: Add specific passes vs Butterfly Guard
+          TECHNIQUES.BUTTERFLY_GUARD_TOP_PASS,
         ],
         inversePositionId: POSITIONS.BUTTERFLY_GUARD_BOTTOM,
     },
@@ -874,6 +903,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         { type: 'Failure', endPositionId: POSITIONS.CLOSED_GUARD_BOTTOM, description: 'Kimura attempt fails, opponent defends or pulls arm free.', likelihood: 'Possible' },
         // Can also lead to sweeps or back takes if opponent reacts incorrectly
       ],
+      followUpTechniqueIds: [TECHNIQUES.CG_BOTTOM_HIP_BUMP_SWEEP, TECHNIQUES.CG_BOTTOM_ARM_DRAG_TO_BACK, TECHNIQUES.CG_BOTTOM_ARMBAR, TECHNIQUES.CG_BOTTOM_TRIANGLE_CHOKE], // Added potential follow-ups
     },
      [TECHNIQUES.CG_BOTTOM_GUILLOTINE]: {
       id: TECHNIQUES.CG_BOTTOM_GUILLOTINE,
@@ -889,6 +919,8 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         { type: 'Failure', endPositionId: POSITIONS.CLOSED_GUARD_BOTTOM, description: 'Choke attempt fails, opponent postures up or defends neck.', likelihood: 'Possible' },
          { type: 'Countered', endPositionId: POSITIONS.SIDE_CONTROL_BOTTOM, description: 'Opponent defends choke by passing guard (e.g., Von Flue choke counter possibility in Gi).', likelihood: 'Possible' },
       ],
+      followUpTechniqueIds: [TECHNIQUES.CG_BOTTOM_ARMBAR, TECHNIQUES.CG_BOTTOM_OMOPLATA], // Example follow-ups
+      setupTechniqueIds: [TECHNIQUES.CG_BOTTOM_KIMURA, TECHNIQUES.CG_BOTTOM_OMOPLATA], // Added setups
     },
     [TECHNIQUES.CG_BOTTOM_TRIANGLE_CHOKE]: {
       id: TECHNIQUES.CG_BOTTOM_TRIANGLE_CHOKE,
@@ -905,6 +937,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         // Can transition to Armbar or Omoplata if triangle is defended certain ways
       ],
       followUpTechniqueIds: [TECHNIQUES.CG_BOTTOM_ARMBAR, TECHNIQUES.CG_BOTTOM_OMOPLATA], // Example follow-ups
+      setupTechniqueIds: [TECHNIQUES.CG_BOTTOM_KIMURA, TECHNIQUES.CG_BOTTOM_OMOPLATA], // Added setups
     },
     [TECHNIQUES.CG_BOTTOM_ARMBAR]: {
       id: TECHNIQUES.CG_BOTTOM_ARMBAR,
@@ -921,6 +954,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         // Can transition to Triangle or Omoplata
       ],
        followUpTechniqueIds: [TECHNIQUES.CG_BOTTOM_TRIANGLE_CHOKE, TECHNIQUES.CG_BOTTOM_OMOPLATA],
+       setupTechniqueIds: [TECHNIQUES.CG_BOTTOM_TRIANGLE_CHOKE, TECHNIQUES.CG_BOTTOM_FLOWER_SWEEP, TECHNIQUES.CG_BOTTOM_KIMURA], // Added setups
     },
      [TECHNIQUES.CG_BOTTOM_OMOPLATA]: {
       id: TECHNIQUES.CG_BOTTOM_OMOPLATA,
@@ -936,6 +970,8 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         { type: 'PositionChange', endPositionId: POSITIONS.OPEN_GUARD_TOP, description: 'Opponent rolls forward to defend, resulting in a sweep to top (opponent often in turtle or trying to recover guard).', likelihood: 'Primary' }, // Often used as a sweep
         { type: 'Failure', endPositionId: POSITIONS.CLOSED_GUARD_BOTTOM, description: 'Attempt fails, opponent postures out or clears leg.', likelihood: 'Possible' },
       ],
+      followUpTechniqueIds: [TECHNIQUES.CG_BOTTOM_TRIANGLE_CHOKE], // Added potential follow-up
+      setupTechniqueIds: [TECHNIQUES.CG_BOTTOM_TRIANGLE_CHOKE, TECHNIQUES.CG_BOTTOM_ARMBAR], // Added setups
     },
     [TECHNIQUES.CG_BOTTOM_HIP_BUMP_SWEEP]: {
       id: TECHNIQUES.CG_BOTTOM_HIP_BUMP_SWEEP,
@@ -952,6 +988,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         // Can transition to Kimura or Guillotine if opponent bases incorrectly
       ],
        followUpTechniqueIds: [TECHNIQUES.CG_BOTTOM_KIMURA, TECHNIQUES.CG_BOTTOM_GUILLOTINE],
+       counteredByTechniqueIds: [TECHNIQUES.CG_BOTTOM_DOUBLE_ANKLE_SWEEP], // Added explicit counter ID
     },
      [TECHNIQUES.CG_BOTTOM_SCISSOR_SWEEP]: {
       id: TECHNIQUES.CG_BOTTOM_SCISSOR_SWEEP,
@@ -1311,6 +1348,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
           { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply armbar.', likelihood: 'Primary' },
           { type: 'Failure', endPositionId: POSITIONS.SIDE_CONTROL_TOP, description: 'Armbar fails.', likelihood: 'Possible' },
         ],
+        setupTechniqueIds: [TECHNIQUES.SC_TOP_AMERICANA, TECHNIQUES.SC_TOP_KIMURA], // Added setups
       },
       [TECHNIQUES.SC_TOP_ARM_TRIANGLE]: {
         id: TECHNIQUES.SC_TOP_ARM_TRIANGLE,
@@ -1324,6 +1362,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
           { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply choke.', likelihood: 'Primary' },
           { type: 'Failure', endPositionId: POSITIONS.SIDE_CONTROL_TOP, description: 'Choke fails.', likelihood: 'Possible' },
         ],
+        setupTechniqueIds: [TECHNIQUES.SC_TOP_KIMURA], // Added setup
       },
       [TECHNIQUES.SC_TOP_PAPER_CUTTER_CHOKE]: {
         id: TECHNIQUES.SC_TOP_PAPER_CUTTER_CHOKE,
@@ -1350,6 +1389,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
           { type: 'PositionChange', endPositionId: POSITIONS.BACK_CONTROL_TOP, description: 'Successfully take the back.', likelihood: 'Primary' },
           { type: 'Failure', endPositionId: POSITIONS.SIDE_CONTROL_TOP, description: 'Back take fails.', likelihood: 'Possible' },
         ],
+        setupTechniqueIds: [TECHNIQUES.SC_TOP_KIMURA], // Added setup
       },
        [TECHNIQUES.SC_TOP_NORTH_SOUTH_TRANSITION]: {
         id: TECHNIQUES.SC_TOP_NORTH_SOUTH_TRANSITION,
@@ -1835,7 +1875,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         difficulty: BjjDifficulty.Beginner,
         type: BjjTechniqueType.GuardPass,
         originPositionId: POSITIONS.HALF_GUARD_TOP,
-        setupTechniqueIds: [TECHNIQUES.HG_TOP_CROSSFACE_UNDERHOOK_CONTROL],
+        setupTechniqueIds: [TECHNIQUES.HG_TOP_CROSSFACE_UNDERHOOK_CONTROL, TECHNIQUES.CG_TOP_ELBOW_KNEE_BREAK], // Added Elbow-Knee Break as setup
         outcomes: [
           { type: 'PositionChange', endPositionId: POSITIONS.SIDE_CONTROL_TOP, description: 'Successfully pass Half Guard using Knee Cut, achieving Side Control.', likelihood: 'Primary' },
            { type: 'PositionChange', endPositionId: POSITIONS.KNEE_ON_BELLY_TOP, description: 'Pass leads directly into Knee on Belly.', likelihood: 'Secondary' },
@@ -1865,6 +1905,148 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       // [TECHNIQUES.HG_TOP_DARCE]: { ... }, 
 
     // ... Add techniques for other guards (Spider, DLR, RDLR, etc.) ...
+
+    // --- Placeholder Technique Definitions for Connectivity ---
+    [TECHNIQUES.KESAGATAME_BOTTOM_ESCAPE]: {
+      id: TECHNIQUES.KESAGATAME_BOTTOM_ESCAPE,
+      name: 'Kesa Gatame Escape (Placeholder)',
+      description: 'Placeholder description for escaping Kesa Gatame.',
+      applicability: BjjApplicability.Both,
+      difficulty: BjjDifficulty.Beginner,
+      type: BjjTechniqueType.Escape,
+      originPositionId: POSITIONS.KESAGATAME_BOTTOM,
+      outcomes: [{ type: 'Failure', endPositionId: POSITIONS.KESAGATAME_BOTTOM, description: 'Escape attempt fails.', likelihood: 'Possible' }],
+    },
+    [TECHNIQUES.NORTH_SOUTH_BOTTOM_ESCAPE]: {
+      id: TECHNIQUES.NORTH_SOUTH_BOTTOM_ESCAPE,
+      name: 'North-South Escape (Placeholder)',
+      description: 'Placeholder description for escaping North-South bottom.',
+      applicability: BjjApplicability.Both,
+      difficulty: BjjDifficulty.Beginner,
+      type: BjjTechniqueType.Escape,
+      originPositionId: POSITIONS.NORTH_SOUTH_BOTTOM,
+      outcomes: [{ type: 'Failure', endPositionId: POSITIONS.NORTH_SOUTH_BOTTOM, description: 'Escape attempt fails.', likelihood: 'Possible' }],
+    },
+    [TECHNIQUES.BODY_TRIANGLE_BOTTOM_ESCAPE]: {
+      id: TECHNIQUES.BODY_TRIANGLE_BOTTOM_ESCAPE,
+      name: 'Body Triangle Escape (Placeholder)',
+      description: 'Placeholder description for escaping body triangle bottom.',
+      applicability: BjjApplicability.Both,
+      difficulty: BjjDifficulty.Intermediate, // Body triangle escapes are harder
+      type: BjjTechniqueType.Escape,
+      originPositionId: POSITIONS.BODY_TRIANGLE_BOTTOM,
+      outcomes: [{ type: 'Failure', endPositionId: POSITIONS.BODY_TRIANGLE_BOTTOM, description: 'Escape attempt fails.', likelihood: 'Possible' }],
+    },
+    [TECHNIQUES.DEEP_HALF_GUARD_BOTTOM_SWEEP]: {
+      id: TECHNIQUES.DEEP_HALF_GUARD_BOTTOM_SWEEP,
+      name: 'Deep Half Sweep (Placeholder)',
+      description: 'Placeholder description for sweeping from Deep Half Guard.',
+      applicability: BjjApplicability.Both,
+      difficulty: BjjDifficulty.Intermediate,
+      type: BjjTechniqueType.Sweep,
+      originPositionId: POSITIONS.DEEP_HALF_GUARD_BOTTOM,
+      outcomes: [{ type: 'Failure', endPositionId: POSITIONS.DEEP_HALF_GUARD_BOTTOM, description: 'Sweep attempt fails.', likelihood: 'Possible' }],
+    },
+    [TECHNIQUES.DEEP_HALF_GUARD_TOP_PASS]: {
+      id: TECHNIQUES.DEEP_HALF_GUARD_TOP_PASS,
+      name: 'Deep Half Pass (Placeholder)',
+      description: 'Placeholder description for passing Deep Half Guard.',
+      applicability: BjjApplicability.Both,
+      difficulty: BjjDifficulty.Intermediate,
+      type: BjjTechniqueType.GuardPass,
+      originPositionId: POSITIONS.DEEP_HALF_GUARD_TOP,
+      outcomes: [{ type: 'Failure', endPositionId: POSITIONS.DEEP_HALF_GUARD_TOP, description: 'Pass attempt fails.', likelihood: 'Possible' }],
+    },
+    [TECHNIQUES.Z_GUARD_BOTTOM_SWEEP]: {
+      id: TECHNIQUES.Z_GUARD_BOTTOM_SWEEP,
+      name: 'Z-Guard Sweep (Placeholder)',
+      description: 'Placeholder description for sweeping from Z-Guard.',
+      applicability: BjjApplicability.Both,
+      difficulty: BjjDifficulty.Beginner,
+      type: BjjTechniqueType.Sweep,
+      originPositionId: POSITIONS.Z_GUARD_BOTTOM,
+      outcomes: [{ type: 'Failure', endPositionId: POSITIONS.Z_GUARD_BOTTOM, description: 'Sweep attempt fails.', likelihood: 'Possible' }],
+    },
+    [TECHNIQUES.Z_GUARD_TOP_PASS]: {
+      id: TECHNIQUES.Z_GUARD_TOP_PASS,
+      name: 'Z-Guard Pass (Placeholder)',
+      description: 'Placeholder description for passing Z-Guard.',
+      applicability: BjjApplicability.Both,
+      difficulty: BjjDifficulty.Beginner,
+      type: BjjTechniqueType.GuardPass,
+      originPositionId: POSITIONS.Z_GUARD_TOP,
+      outcomes: [{ type: 'Failure', endPositionId: POSITIONS.Z_GUARD_TOP, description: 'Pass attempt fails.', likelihood: 'Possible' }],
+    },
+    [TECHNIQUES.SPIDER_GUARD_BOTTOM_SWEEP]: {
+      id: TECHNIQUES.SPIDER_GUARD_BOTTOM_SWEEP,
+      name: 'Spider Guard Sweep (Placeholder)',
+      description: 'Placeholder description for sweeping from Spider Guard.',
+      applicability: BjjApplicability.Gi, // Spider guard is Gi specific
+      difficulty: BjjDifficulty.Intermediate,
+      type: BjjTechniqueType.Sweep,
+      originPositionId: POSITIONS.SPIDER_GUARD_BOTTOM,
+      outcomes: [{ type: 'Failure', endPositionId: POSITIONS.SPIDER_GUARD_BOTTOM, description: 'Sweep attempt fails.', likelihood: 'Possible' }],
+    },
+    [TECHNIQUES.SPIDER_GUARD_TOP_PASS]: {
+      id: TECHNIQUES.SPIDER_GUARD_TOP_PASS,
+      name: 'Spider Guard Pass (Placeholder)',
+      description: 'Placeholder description for passing Spider Guard.',
+      applicability: BjjApplicability.Gi,
+      difficulty: BjjDifficulty.Intermediate,
+      type: BjjTechniqueType.GuardPass,
+      originPositionId: POSITIONS.SPIDER_GUARD_TOP,
+      outcomes: [{ type: 'Failure', endPositionId: POSITIONS.SPIDER_GUARD_TOP, description: 'Pass attempt fails.', likelihood: 'Possible' }],
+    },
+    [TECHNIQUES.DE_LA_RIVA_GUARD_BOTTOM_SWEEP]: {
+      id: TECHNIQUES.DE_LA_RIVA_GUARD_BOTTOM_SWEEP,
+      name: 'De La Riva Sweep (Placeholder)',
+      description: 'Placeholder description for sweeping from De La Riva Guard.',
+      applicability: BjjApplicability.Both,
+      difficulty: BjjDifficulty.Intermediate,
+      type: BjjTechniqueType.Sweep,
+      originPositionId: POSITIONS.DE_LA_RIVA_GUARD_BOTTOM,
+      outcomes: [{ type: 'Failure', endPositionId: POSITIONS.DE_LA_RIVA_GUARD_BOTTOM, description: 'Sweep attempt fails.', likelihood: 'Possible' }],
+    },
+    [TECHNIQUES.DE_LA_RIVA_GUARD_TOP_PASS]: {
+      id: TECHNIQUES.DE_LA_RIVA_GUARD_TOP_PASS,
+      name: 'De La Riva Pass (Placeholder)',
+      description: 'Placeholder description for passing De La Riva Guard.',
+      applicability: BjjApplicability.Both,
+      difficulty: BjjDifficulty.Intermediate,
+      type: BjjTechniqueType.GuardPass,
+      originPositionId: POSITIONS.DE_LA_RIVA_GUARD_TOP,
+      outcomes: [{ type: 'Failure', endPositionId: POSITIONS.DE_LA_RIVA_GUARD_TOP, description: 'Pass attempt fails.', likelihood: 'Possible' }],
+    },
+    [TECHNIQUES.REVERSE_DE_LA_RIVA_GUARD_BOTTOM_SWEEP]: {
+      id: TECHNIQUES.REVERSE_DE_LA_RIVA_GUARD_BOTTOM_SWEEP,
+      name: 'Reverse De La Riva Sweep (Placeholder)',
+      description: 'Placeholder description for sweeping from Reverse De La Riva Guard.',
+      applicability: BjjApplicability.Both,
+      difficulty: BjjDifficulty.Intermediate,
+      type: BjjTechniqueType.Sweep,
+      originPositionId: POSITIONS.REVERSE_DE_LA_RIVA_GUARD_BOTTOM,
+      outcomes: [{ type: 'Failure', endPositionId: POSITIONS.REVERSE_DE_LA_RIVA_GUARD_BOTTOM, description: 'Sweep attempt fails.', likelihood: 'Possible' }],
+    },
+    [TECHNIQUES.REVERSE_DE_LA_RIVA_GUARD_TOP_PASS]: {
+      id: TECHNIQUES.REVERSE_DE_LA_RIVA_GUARD_TOP_PASS,
+      name: 'Reverse De La Riva Pass (Placeholder)',
+      description: 'Placeholder description for passing Reverse De La Riva Guard.',
+      applicability: BjjApplicability.Both,
+      difficulty: BjjDifficulty.Intermediate,
+      type: BjjTechniqueType.GuardPass,
+      originPositionId: POSITIONS.REVERSE_DE_LA_RIVA_GUARD_TOP,
+      outcomes: [{ type: 'Failure', endPositionId: POSITIONS.REVERSE_DE_LA_RIVA_GUARD_TOP, description: 'Pass attempt fails.', likelihood: 'Possible' }],
+    },
+    [TECHNIQUES.BUTTERFLY_GUARD_TOP_PASS]: {
+      id: TECHNIQUES.BUTTERFLY_GUARD_TOP_PASS,
+      name: 'Butterfly Guard Pass (Placeholder)',
+      description: 'Placeholder description for passing Butterfly Guard.',
+      applicability: BjjApplicability.Both,
+      difficulty: BjjDifficulty.Intermediate,
+      type: BjjTechniqueType.GuardPass,
+      originPositionId: POSITIONS.BUTTERFLY_GUARD_TOP,
+      outcomes: [{ type: 'Failure', endPositionId: POSITIONS.BUTTERFLY_GUARD_TOP, description: 'Pass attempt fails.', likelihood: 'Possible' }],
+    },
 
   },
 }; 
