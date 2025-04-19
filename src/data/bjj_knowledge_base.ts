@@ -13,6 +13,7 @@ const media = (url: string, type: 'image' | 'video', caption?: string, source?: 
 // --- Define Position IDs ---
 // Note: Using conventions like '-top', '-bottom', 'in-' prefix for clarity on perspective
 const POSITIONS = {
+  SUBMISSION: 'submission',
   STANDING: 'standing',
   // Mount
   MOUNT_TOP: 'mount-top',
@@ -166,6 +167,15 @@ export type ConcreteTechniqueId = typeof TECHNIQUES[keyof typeof TECHNIQUES];
 
 export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTechniqueId> = {
   positions: {
+    [POSITIONS.SUBMISSION]: {
+      id: POSITIONS.SUBMISSION,
+      name: 'Submission (Applied)',
+      description: 'A submission has been applied and the match is considered finished unless the opponent escapes. This is a terminal state in the grappling exchange.',
+      advantage: 'Disadvantageous', // 'Terminal',
+      applicableTechniqueIds: [],
+      inversePositionId: POSITIONS.SUBMISSION, // No inverse; terminal state
+    },
+
     // --- Standing ---
     [POSITIONS.STANDING]: {
       id: POSITIONS.STANDING,
@@ -828,7 +838,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       originPositionId: POSITIONS.STANDING,
       media: [media('https://www.youtube.com/watch?v=8dP3K8JvnL0', 'video', 'Standing Guillotine')],
       outcomes: [
-        { type: 'Submission', description: 'Successfully apply choke, opponent taps while standing.', likelihood: 'Possible' },
+        { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply choke, opponent taps while standing.', likelihood: 'Possible' },
         { type: 'PositionChange', endPositionId: POSITIONS.CLOSED_GUARD_BOTTOM, description: 'Apply choke and pull guard simultaneously, finishing from Closed Guard.', likelihood: 'Secondary' },
          { type: 'Failure', endPositionId: POSITIONS.STANDING, description: 'Choke attempt fails, opponent defends posture, remain standing.', likelihood: 'Primary' }, // Often defended
          { type: 'Countered', endPositionId: POSITIONS.SIDE_CONTROL_BOTTOM, description: 'Opponent defends choke and completes takedown, landing in Side Control.', likelihood: 'Possible' },
@@ -846,7 +856,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       originPositionId: POSITIONS.CLOSED_GUARD_BOTTOM,
       media: [media('https://www.infighting.ca/bjj/the-90-essential-bjj-beginner-techniques/', 'image', 'Cross-Collar Choke Setup (Conceptual)')], // Placeholder link
       outcomes: [
-        { type: 'Submission', description: 'Successfully apply choke, opponent taps.', likelihood: 'Primary' },
+        { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply choke, opponent taps.', likelihood: 'Primary' },
         { type: 'Failure', endPositionId: POSITIONS.CLOSED_GUARD_BOTTOM, description: 'Choke attempt fails, opponent defends posture or strips grips.', likelihood: 'Possible' },
       ],
     },
@@ -860,7 +870,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       originPositionId: POSITIONS.CLOSED_GUARD_BOTTOM,
        media: [media('https://www.infighting.ca/bjj/the-90-essential-bjj-beginner-techniques/', 'image', 'Guard Kimura Setup (Conceptual)')], // Placeholder link
       outcomes: [
-        { type: 'Submission', description: 'Successfully apply Kimura lock, opponent taps.', likelihood: 'Primary' },
+        { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply Kimura lock, opponent taps.', likelihood: 'Primary' },
         { type: 'Failure', endPositionId: POSITIONS.CLOSED_GUARD_BOTTOM, description: 'Kimura attempt fails, opponent defends or pulls arm free.', likelihood: 'Possible' },
         // Can also lead to sweeps or back takes if opponent reacts incorrectly
       ],
@@ -875,7 +885,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       originPositionId: POSITIONS.CLOSED_GUARD_BOTTOM,
        media: [media('https://www.infighting.ca/bjj/the-90-essential-bjj-beginner-techniques/', 'image', 'Arm-in Guillotine (Conceptual)')], // Placeholder link
       outcomes: [
-        { type: 'Submission', description: 'Successfully apply Guillotine choke, opponent taps.', likelihood: 'Primary' },
+        { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply Guillotine choke, opponent taps.', likelihood: 'Primary' },
         { type: 'Failure', endPositionId: POSITIONS.CLOSED_GUARD_BOTTOM, description: 'Choke attempt fails, opponent postures up or defends neck.', likelihood: 'Possible' },
          { type: 'Countered', endPositionId: POSITIONS.SIDE_CONTROL_BOTTOM, description: 'Opponent defends choke by passing guard (e.g., Von Flue choke counter possibility in Gi).', likelihood: 'Possible' },
       ],
@@ -890,7 +900,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       originPositionId: POSITIONS.CLOSED_GUARD_BOTTOM,
       media: [media('https://www.infighting.ca/bjj/the-90-essential-bjj-beginner-techniques/', 'image', 'Triangle Choke from Guard (Conceptual)')], // Placeholder link
       outcomes: [
-        { type: 'Submission', description: 'Successfully apply Triangle choke, opponent taps.', likelihood: 'Primary' },
+        { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply Triangle choke, opponent taps.', likelihood: 'Primary' },
         { type: 'Failure', endPositionId: POSITIONS.CLOSED_GUARD_BOTTOM, description: 'Choke attempt fails, opponent postures, stacks, or clears legs.', likelihood: 'Possible' },
         // Can transition to Armbar or Omoplata if triangle is defended certain ways
       ],
@@ -906,7 +916,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       originPositionId: POSITIONS.CLOSED_GUARD_BOTTOM,
       media: [media('https://www.infighting.ca/bjj/the-90-essential-bjj-beginner-techniques/', 'image', 'Armbar from Guard (Conceptual)')], // Placeholder link
       outcomes: [
-        { type: 'Submission', description: 'Successfully apply Armbar, opponent taps.', likelihood: 'Primary' },
+        { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply Armbar, opponent taps.', likelihood: 'Primary' },
         { type: 'Failure', endPositionId: POSITIONS.CLOSED_GUARD_BOTTOM, description: 'Armbar attempt fails, opponent pulls arm out or stacks.', likelihood: 'Possible' },
         // Can transition to Triangle or Omoplata
       ],
@@ -922,7 +932,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       originPositionId: POSITIONS.CLOSED_GUARD_BOTTOM,
       media: [media('https://www.infighting.ca/bjj/the-90-essential-bjj-beginner-techniques/', 'image', 'Omoplata Setup (Conceptual)')], // Placeholder link
       outcomes: [
-        { type: 'Submission', description: 'Successfully apply Omoplata lock, opponent taps.', likelihood: 'Secondary' }, // Often harder to finish than setup
+        { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply Omoplata lock, opponent taps.', likelihood: 'Secondary' }, // Often harder to finish than setup
         { type: 'PositionChange', endPositionId: POSITIONS.OPEN_GUARD_TOP, description: 'Opponent rolls forward to defend, resulting in a sweep to top (opponent often in turtle or trying to recover guard).', likelihood: 'Primary' }, // Often used as a sweep
         { type: 'Failure', endPositionId: POSITIONS.CLOSED_GUARD_BOTTOM, description: 'Attempt fails, opponent postures out or clears leg.', likelihood: 'Possible' },
       ],
@@ -1112,7 +1122,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       originPositionId: POSITIONS.MOUNT_TOP,
       media: [media('https://www.grapplearts.com/wp-content/uploads/2015/01/mount-armbar-1024x768.jpg', 'image', 'Mounted Armbar Setup')],
       outcomes: [
-        { type: 'Submission', description: 'Successfully apply Armbar, opponent taps.', likelihood: 'Primary' },
+        { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply Armbar, opponent taps.', likelihood: 'Primary' },
         { type: 'Failure', endPositionId: POSITIONS.MOUNT_TOP, description: 'Armbar attempt fails, opponent pulls arm free or defends, potentially remain in Mount.', likelihood: 'Possible' },
         { type: 'Countered', endPositionId: POSITIONS.CLOSED_GUARD_TOP, description: 'Opponent escapes during attempt, possibly recovering guard.', likelihood: 'Possible' },
       ],
@@ -1126,7 +1136,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       type: BjjTechniqueType.Submission,
       originPositionId: POSITIONS.MOUNT_TOP,
       outcomes: [
-        { type: 'Submission', description: 'Successfully apply Americana, opponent taps.', likelihood: 'Primary' },
+        { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply Americana, opponent taps.', likelihood: 'Primary' },
         { type: 'Failure', endPositionId: POSITIONS.MOUNT_TOP, description: 'Attempt fails, opponent defends or straightens arm.', likelihood: 'Possible' },
       ],
        followUpTechniqueIds: [TECHNIQUES.MOUNT_TOP_ARMBAR], // Often transitions to armbar if defended
@@ -1141,7 +1151,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       type: BjjTechniqueType.Submission,
       originPositionId: POSITIONS.MOUNT_TOP,
       outcomes: [
-        { type: 'Submission', description: 'Successfully apply choke.', likelihood: 'Primary' },
+        { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply choke.', likelihood: 'Primary' },
         { type: 'Failure', endPositionId: POSITIONS.MOUNT_TOP, description: 'Choke fails.', likelihood: 'Possible' },
       ],
     },
@@ -1154,7 +1164,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       type: BjjTechniqueType.Submission,
       originPositionId: POSITIONS.MOUNT_TOP,
       outcomes: [
-        { type: 'Submission', description: 'Successfully apply choke.', likelihood: 'Primary' },
+        { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply choke.', likelihood: 'Primary' },
         { type: 'Failure', endPositionId: POSITIONS.MOUNT_TOP, description: 'Choke fails.', likelihood: 'Possible' },
       ],
     },
@@ -1167,7 +1177,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       type: BjjTechniqueType.Submission,
       originPositionId: POSITIONS.MOUNT_TOP,
       outcomes: [
-        { type: 'Submission', description: 'Successfully apply choke.', likelihood: 'Primary' },
+        { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply choke.', likelihood: 'Primary' },
         { type: 'Failure', endPositionId: POSITIONS.MOUNT_TOP, description: 'Choke fails.', likelihood: 'Possible' },
         { type: 'PositionChange', endPositionId: POSITIONS.SIDE_CONTROL_TOP, description: 'Choke attempt fails, transition to Side Control to finish or reset.', likelihood: 'Secondary' },
       ],
@@ -1241,7 +1251,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
        originPositionId: POSITIONS.SIDE_CONTROL_TOP,
        media: [media('https://www.infighting.ca/bjj/the-90-essential-bjj-beginner-techniques/', 'image', 'Americana from Side Control (Conceptual)')], // Placeholder link
        outcomes: [
-         { type: 'Submission', description: 'Successfully apply Americana, opponent taps.', likelihood: 'Primary' },
+         { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply Americana, opponent taps.', likelihood: 'Primary' },
          { type: 'Failure', endPositionId: POSITIONS.SIDE_CONTROL_TOP, description: 'Attempt fails, opponent defends.', likelihood: 'Possible' },
        ],
        followUpTechniqueIds: [TECHNIQUES.SC_TOP_KIMURA, TECHNIQUES.SC_TOP_ARMBAR], // Part of a submission chain
@@ -1255,7 +1265,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
       type: BjjTechniqueType.Submission,
       originPositionId: POSITIONS.SIDE_CONTROL_TOP,
       outcomes: [
-        { type: 'Submission', description: 'Successfully apply Kimura, opponent taps.', likelihood: 'Primary' },
+        { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply Kimura, opponent taps.', likelihood: 'Primary' },
         { type: 'Failure', endPositionId: POSITIONS.SIDE_CONTROL_TOP, description: 'Attempt fails, opponent defends.', likelihood: 'Possible' },
       ],
        followUpTechniqueIds: [TECHNIQUES.SC_TOP_ARMBAR, TECHNIQUES.SC_TOP_BACK_TAKE], // Can lead to other attacks if defended
@@ -1298,7 +1308,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         type: BjjTechniqueType.Submission,
         originPositionId: POSITIONS.SIDE_CONTROL_TOP,
         outcomes: [
-          { type: 'Submission', description: 'Successfully apply armbar.', likelihood: 'Primary' },
+          { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply armbar.', likelihood: 'Primary' },
           { type: 'Failure', endPositionId: POSITIONS.SIDE_CONTROL_TOP, description: 'Armbar fails.', likelihood: 'Possible' },
         ],
       },
@@ -1311,7 +1321,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         type: BjjTechniqueType.Submission,
         originPositionId: POSITIONS.SIDE_CONTROL_TOP,
         outcomes: [
-          { type: 'Submission', description: 'Successfully apply choke.', likelihood: 'Primary' },
+          { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply choke.', likelihood: 'Primary' },
           { type: 'Failure', endPositionId: POSITIONS.SIDE_CONTROL_TOP, description: 'Choke fails.', likelihood: 'Possible' },
         ],
       },
@@ -1324,7 +1334,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         type: BjjTechniqueType.Submission,
         originPositionId: POSITIONS.SIDE_CONTROL_TOP,
         outcomes: [
-          { type: 'Submission', description: 'Successfully apply choke.', likelihood: 'Primary' },
+          { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply choke.', likelihood: 'Primary' },
           { type: 'Failure', endPositionId: POSITIONS.SIDE_CONTROL_TOP, description: 'Choke fails.', likelihood: 'Possible' },
         ],
       },
@@ -1427,7 +1437,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
        media: [media('https://www.youtube.com/watch?v=br4AC0WhUXM', 'video', 'Rear Naked Choke Basics')],
        setupTechniqueIds: [TECHNIQUES.BC_TOP_SEATBELT_CONTROL],
        outcomes: [
-         { type: 'Submission', description: 'Successfully apply RNC, opponent taps.', likelihood: 'Primary' },
+         { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply RNC, opponent taps.', likelihood: 'Primary' },
          { type: 'Failure', endPositionId: POSITIONS.BACK_CONTROL_TOP, description: 'Choke attempt fails, opponent defends neck or strips grips.', likelihood: 'Possible' },
          { type: 'Countered', endPositionId: POSITIONS.CLOSED_GUARD_TOP, description: 'Opponent successfully executes escape during choke attempt, landing you in their guard.', likelihood: 'CommonCounter', counteredByTechniqueId: TECHNIQUES.BC_BOTTOM_TURN_IN_ESCAPE }, // Example counter link
        ],
@@ -1442,7 +1452,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
        originPositionId: POSITIONS.BACK_CONTROL_TOP,
         setupTechniqueIds: [TECHNIQUES.BC_TOP_SEATBELT_CONTROL],
        outcomes: [
-         { type: 'Submission', description: 'Successfully apply Bow and Arrow choke, opponent taps.', likelihood: 'Primary' },
+         { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply Bow and Arrow choke, opponent taps.', likelihood: 'Primary' },
          { type: 'Failure', endPositionId: POSITIONS.BACK_CONTROL_TOP, description: 'Choke attempt fails, opponent defends grips or posture.', likelihood: 'Possible' },
        ],
      },
@@ -1528,7 +1538,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         type: BjjTechniqueType.Submission,
         originPositionId: POSITIONS.KNEE_ON_BELLY_TOP,
         outcomes: [
-          { type: 'Submission', description: 'Successfully apply spinning armbar, opponent taps.', likelihood: 'Primary' },
+          { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply spinning armbar, opponent taps.', likelihood: 'Primary' },
           { type: 'Failure', endPositionId: POSITIONS.KNEE_ON_BELLY_TOP, description: 'Armbar attempt fails, opponent pulls arm free or defends.', likelihood: 'Possible' },
            { type: 'Countered', endPositionId: POSITIONS.HALF_GUARD_BOTTOM, description: 'Opponent bridges or shrimps during spin, potentially recovering half guard.', likelihood: 'Possible' },
         ],
@@ -1558,7 +1568,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         type: BjjTechniqueType.Submission,
         originPositionId: POSITIONS.KNEE_ON_BELLY_TOP,
         outcomes: [
-          { type: 'Submission', description: 'Successfully apply choke.', likelihood: 'Primary' },
+          { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply choke.', likelihood: 'Primary' },
           { type: 'Failure', endPositionId: POSITIONS.KNEE_ON_BELLY_TOP, description: 'Choke fails.', likelihood: 'Possible' },
         ],
       },
@@ -1645,7 +1655,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         type: BjjTechniqueType.Submission,
         originPositionId: POSITIONS.TURTLE_TOP,
         outcomes: [
-          { type: 'Submission', description: 'Successfully apply Clock Choke, opponent taps.', likelihood: 'Primary' },
+          { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply Clock Choke, opponent taps.', likelihood: 'Primary' },
           { type: 'Failure', endPositionId: POSITIONS.TURTLE_TOP, description: 'Choke fails, opponent defends grip or creates space.', likelihood: 'Possible' },
         ],
       },
@@ -1659,7 +1669,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         type: BjjTechniqueType.Submission,
         originPositionId: POSITIONS.TURTLE_TOP,
         outcomes: [
-          { type: 'Submission', description: 'Successfully apply choke.', likelihood: 'Primary' },
+          { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply choke.', likelihood: 'Primary' },
           { type: 'Failure', endPositionId: POSITIONS.TURTLE_TOP, description: 'Choke fails.', likelihood: 'Possible' },
         ],
         followUpTechniqueIds: [TECHNIQUES.TURTLE_TOP_DARCE_CHOKE], // Often related setups
@@ -1673,7 +1683,7 @@ export const bjjKnowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTech
         type: BjjTechniqueType.Submission,
         originPositionId: POSITIONS.TURTLE_TOP,
         outcomes: [
-          { type: 'Submission', description: 'Successfully apply choke.', likelihood: 'Primary' },
+          { type: 'Submission', endPositionId: POSITIONS.SUBMISSION, description: 'Successfully apply choke.', likelihood: 'Primary' },
           { type: 'Failure', endPositionId: POSITIONS.TURTLE_TOP, description: 'Choke fails.', likelihood: 'Possible' },
         ],
         followUpTechniqueIds: [TECHNIQUES.TURTLE_TOP_ANACONDA_CHOKE],
