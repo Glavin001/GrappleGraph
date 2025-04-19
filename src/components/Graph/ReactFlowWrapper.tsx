@@ -181,7 +181,8 @@ export default function ReactFlowWrapper({
     console.log("Graph generation complete.");
 
   }, [
-      knowledgeBase, 
+      knowledgeBase,
+      // Must be separate props from filters to avoid unnecessary re-renders
       filters.techniqueType, 
       filters.difficulty, 
       filters.applicability, 

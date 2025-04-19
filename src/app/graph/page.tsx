@@ -1,18 +1,51 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { bjjKnowledgeBase } from '../../data/bjj_knowledge_base';
 import { BjjTechniqueType, BjjDifficulty, BjjApplicability } from '../../types/bjj';
 import type { Position, Technique } from '../../types/bjj';
 import type { ConcretePositionId, ConcreteTechniqueId } from '../../data/bjj_knowledge_base';
 import { ReactFlowProvider } from 'reactflow';
+import { 
+  Autocomplete, 
+  Select, 
+  Checkbox, 
+  Button, 
+  AppShell, 
+  Burger, 
+  Group, 
+  Stack, 
+  Title, 
+  Text, 
+  Box, 
+  ScrollArea, 
+  Paper, 
+  Divider, 
+  Badge 
+} from '@mantine/core'; // Import Mantine components
+import type { ComboboxItem } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 
 // Load ReactFlow dynamically to avoid SSR issues
 const ReactFlowWrapper = dynamic(
   () => import('../../components/Graph/ReactFlowWrapper'),
   { ssr: false }
 );
+
+// Prepare select data
+const techniqueTypeOptions = [
+  { value: 'all', label: 'All Types' },
+  ...Object.values(BjjTechniqueType).map(type => ({ value: type, label: type }))
+];
+const difficultyOptions = [
+  { value: 'all', label: 'All Difficulties' },
+  ...Object.values(BjjDifficulty).map(difficulty => ({ value: difficulty, label: difficulty }))
+];
+const applicabilityOptions = [
+  { value: 'all', label: 'All (Gi & No-Gi)' },
+  ...Object.values(BjjApplicability).map(applicability => ({ value: applicability, label: applicability }))
+];
 
 export default function GraphPage() {
   const [selectedPosition, setSelectedPosition] = useState<Position<ConcretePositionId, ConcreteTechniqueId> | null>(null);
@@ -25,6 +58,17 @@ export default function GraphPage() {
     showVariants: true,
     selectedPositionId: null as ConcretePositionId | null,
   });
+  const [searchValue, setSearchValue] = useState(''); // State for search input
+  const [mobileNavOpened, { toggle: toggleMobileNav }] = useDisclosure();
+  const [mobileAsideOpened, { toggle: toggleMobileAside }] = useDisclosure();
+
+  // Prepare position data for Autocomplete in { value: id, label: name } format
+  const positionSearchData = useMemo((): ComboboxItem[] => {
+    return Object.values(bjjKnowledgeBase.positions).map(pos => ({
+      value: pos.id, // Use position ID as the value
+      label: pos.name, // Use position name as the label
+    }));
+  }, []);
 
   // Calculate statistics for knowledge base
   const stats = {
@@ -38,138 +82,135 @@ export default function GraphPage() {
   const handleNodeClick = (positionId: ConcretePositionId) => {
     setSelectedPosition(bjjKnowledgeBase.positions[positionId]);
     setSelectedTechnique(null);
-    setFilters({
-      ...filters,
+    setFilters(currentFilters => ({ // Use functional update
+      ...currentFilters,
       selectedPositionId: positionId,
-    });
-    // Don't set focus on direct node click to avoid re-centering
+    }));
     setFocusNodeId(null);
+    if (mobileAsideOpened) toggleMobileAside(); // Close aside on mobile if open
   };
 
   const handleEdgeClick = (techniqueId: ConcreteTechniqueId) => {
     setSelectedTechnique(bjjKnowledgeBase.techniques[techniqueId]);
     setSelectedPosition(null);
-    setFilters({
-      ...filters,
+    setFilters(currentFilters => ({ // Use functional update
+      ...currentFilters,
       selectedPositionId: null,
-    });
+    }));
+    if (mobileAsideOpened) toggleMobileAside(); // Close aside on mobile if open
   };
 
   const handlePositionLink = (positionId: ConcretePositionId) => {
-    // Navigate to the position and focus on it
     setSelectedPosition(bjjKnowledgeBase.positions[positionId]);
     setSelectedTechnique(null);
-    setFilters({
-      ...filters,
+    setFilters(currentFilters => ({ // Use functional update
+      ...currentFilters,
       selectedPositionId: positionId,
-    });
-    // Set focus to center the node in the visualization
+    }));
     setFocusNodeId(positionId);
+    if (mobileAsideOpened) toggleMobileAside(); // Close aside on mobile if open
   };
 
   const handleFilterChange = (name: string, value: string | boolean) => {
-    setFilters({
-      ...filters,
+    setFilters(currentFilters => ({ // Use functional update
+      ...currentFilters,
       [name]: value,
-    });
+    }));
   };
 
   const clearSelection = () => {
     setSelectedPosition(null);
     setSelectedTechnique(null);
-    setFilters({
-      ...filters,
+    setFilters(currentFilters => ({ // Use functional update
+      ...currentFilters,
       selectedPositionId: null,
-    });
+    }));
     setFocusNodeId(null);
   };
 
   return (
-    <div className="flex flex-col h-screen">
-      <header className="bg-indigo-800 text-white p-4">
-        <div className="container mx-auto">
-          <h1 className="text-2xl font-bold">GrappleGraph</h1>
-          <p className="text-sm opacity-80">
+    <AppShell
+      header={{ height: 60 }}
+      navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !mobileNavOpened } }}
+      aside={{ width: 400, breakpoint: 'sm', collapsed: { mobile: !mobileAsideOpened } }}
+      padding="md"
+    >
+      <AppShell.Header>
+        <Group h="100%" px="md" justify="space-between">
+          <Group>
+             <Burger opened={mobileNavOpened} onClick={toggleMobileNav} hiddenFrom="sm" size="sm" />
+             <Title order={2}>GrappleGraph</Title>
+          </Group>
+          <Text size="sm" c="dimmed">
             Positions: {stats.positionCount} | Techniques: {stats.techniqueCount} | Submissions: {stats.submissionCount}
-          </p>
-        </div>
-      </header>
+          </Text>
+          <Burger opened={mobileAsideOpened} onClick={toggleMobileAside} hiddenFrom="sm" size="sm" />
+        </Group>
+      </AppShell.Header>
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left sidebar - filters */}
-        <div className="w-64 bg-gray-100 dark:bg-gray-800 p-4 overflow-y-auto">
-          <h2 className="font-bold text-lg mb-4">Filters</h2>
-          
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-1" htmlFor="techniqueType">Technique Type</label>
-            <select 
-              id="techniqueType"
-              className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-              value={filters.techniqueType}
-              onChange={(e) => handleFilterChange('techniqueType', e.target.value)}
-            >
-              <option value="all">All Types</option>
-              {Object.values(BjjTechniqueType).map(type => (
-                <option key={type} value={type}>{type}</option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-1" htmlFor="difficulty">Difficulty</label>
-            <select 
-              id="difficulty"
-              className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-              value={filters.difficulty}
-              onChange={(e) => handleFilterChange('difficulty', e.target.value)}
-            >
-              <option value="all">All Difficulties</option>
-              {Object.values(BjjDifficulty).map(difficulty => (
-                <option key={difficulty} value={difficulty}>{difficulty}</option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-1" htmlFor="applicability">Applicability</label>
-            <select 
-              id="applicability"
-              className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-              value={filters.applicability}
-              onChange={(e) => handleFilterChange('applicability', e.target.value)}
-            >
-              <option value="all">All (Gi & No-Gi)</option>
-              {Object.values(BjjApplicability).map(applicability => (
-                <option key={applicability} value={applicability}>{applicability}</option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="mb-4">
-            <label className="flex items-center text-sm font-medium" htmlFor="showVariants">
-              <input 
-                id="showVariants"
-                type="checkbox" 
-                className="mr-2"
-                checked={filters.showVariants}
-                onChange={(e) => handleFilterChange('showVariants', e.target.checked)}
-              />
-              Show Position Variants
-            </label>
-          </div>
-          
-          <button 
-            type="button"
-            className="w-full bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700"
-            onClick={clearSelection}
-          >
-            Clear Selection
-          </button>
-        </div>
+      <AppShell.Navbar p="md">
+        <ScrollArea h="calc(100vh - var(--app-shell-header-height) - var(--app-shell-padding)*2)">
+            <Stack>
+                {/* Position Search Input */}
+                <Autocomplete
+                  label="Search Position"
+                  placeholder="Enter position name..."
+                  data={positionSearchData} 
+                  value={searchValue}
+                  onChange={setSearchValue}
+                  onOptionSubmit={(value: string) => { 
+                    handlePositionLink(value as ConcretePositionId);
+                    setSearchValue(''); 
+                    if (mobileNavOpened) toggleMobileNav(); // Close nav on mobile after selection
+                  }}
+                  limit={10} 
+                  nothingFound="No position found"
+                />
+                
+                <Divider />
 
-        {/* Main content - graph visualization */}
-        <div className="flex-1 relative">
-          <ReactFlowProvider>
+                <Title order={4}>Filters</Title>
+                
+                <Select
+                  label="Technique Type"
+                  data={techniqueTypeOptions}
+                  value={filters.techniqueType}
+                  onChange={(value) => handleFilterChange('techniqueType', value || 'all')}
+                />
+                
+                <Select
+                  label="Difficulty"
+                  data={difficultyOptions}
+                  value={filters.difficulty}
+                  onChange={(value) => handleFilterChange('difficulty', value || 'all')}
+                />
+                
+                <Select
+                  label="Applicability"
+                  data={applicabilityOptions}
+                  value={filters.applicability}
+                  onChange={(value) => handleFilterChange('applicability', value || 'all')}
+                />
+                
+                <Checkbox
+                  label="Show Position Variants"
+                  checked={filters.showVariants}
+                  onChange={(event) => handleFilterChange('showVariants', event.currentTarget.checked)}
+                />
+                
+                <Button 
+                  fullWidth
+                  onClick={clearSelection}
+                  variant="light"
+                >
+                  Clear Selection
+                </Button>
+            </Stack>
+         </ScrollArea>
+      </AppShell.Navbar>
+
+      <AppShell.Main style={{ height: '100vh' }}>
+        <ReactFlowProvider>
             <ReactFlowWrapper 
               knowledgeBase={bjjKnowledgeBase} 
               filters={filters}
@@ -177,163 +218,162 @@ export default function GraphPage() {
               onEdgeClick={handleEdgeClick}
               focusNode={focusNodeId}
             />
-          </ReactFlowProvider>
-        </div>
-
-        {/* Right sidebar - details panel */}
-        <div className="w-80 bg-gray-100 dark:bg-gray-800 p-4 overflow-y-auto">
+        </ReactFlowProvider>
+      </AppShell.Main>
+      
+      <AppShell.Aside p="md">
+         <ScrollArea h="calc(100vh - var(--app-shell-header-height) - var(--app-shell-padding)*2)">
           {selectedPosition && (
-            <div className="mb-6">
-              <h2 className="font-bold text-xl mb-2">{selectedPosition.name}</h2>
-              {selectedPosition.aliases && selectedPosition.aliases.length > 0 && (
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                  Also known as: {selectedPosition.aliases.join(', ')}
-                </p>
-              )}
-              <div className="mb-3">
-                <span className="inline-block bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 text-xs px-2 py-1 rounded">
-                  {selectedPosition.advantage || 'Neutral'}
-                </span>
-                {selectedPosition.isVariant && (
-                  <span className="inline-block bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-100 text-xs px-2 py-1 rounded ml-2">
-                    Variant
-                  </span>
+            <Paper shadow="xs" p="md" withBorder>
+              <Stack>
+                <Title order={3}>{selectedPosition.name}</Title>
+                {selectedPosition.aliases && selectedPosition.aliases.length > 0 && (
+                  <Text size="sm" c="dimmed">
+                    Also known as: {selectedPosition.aliases.join(', ')}
+                  </Text>
                 )}
-              </div>
-              <p className="text-sm mb-4">{selectedPosition.description}</p>
-              
-              {selectedPosition.applicableTechniqueIds && selectedPosition.applicableTechniqueIds.length > 0 && (
-                <div>
-                  <h3 className="font-semibold text-sm mb-1">Available Techniques:</h3>
-                  <ul className="text-sm">
-                    {selectedPosition.applicableTechniqueIds.map(techId => (
-                      <li key={techId} className="mb-1">
-                        <button
-                          type="button"
-                          className="text-left w-full hover:text-indigo-600 focus:text-indigo-600 focus:outline-none"
+                <Group>
+                  <Badge color="blue">{selectedPosition.advantage || 'Neutral'}</Badge>
+                  {selectedPosition.isVariant && (
+                     <Badge color="purple">Variant</Badge>
+                  )}
+                </Group>
+                <Text size="sm">{selectedPosition.description}</Text>
+                
+                {selectedPosition.applicableTechniqueIds && selectedPosition.applicableTechniqueIds.length > 0 && (
+                  <Box>
+                    <Title order={5} mb="xs">Available Techniques:</Title>
+                    <Stack gap="xs">
+                      {selectedPosition.applicableTechniqueIds.map(techId => (
+                        <Button
+                          key={techId}
+                          variant="subtle"
+                          size="sm"
+                          justify="left"
+                          fullWidth
                           onClick={() => handleEdgeClick(techId)}
+                          style={{ whiteSpace: 'normal', height: 'auto' }}
                         >
                           {bjjKnowledgeBase.techniques[techId].name}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              
-              {selectedPosition.inversePositionId && (
-                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <h3 className="font-semibold text-sm mb-1">Inverse Position:</h3>
-                  <button
-                    type="button"
-                    className="text-left text-sm text-indigo-600 hover:text-indigo-800 focus:text-indigo-800 focus:outline-none"
-                    onClick={() => handlePositionLink(selectedPosition.inversePositionId as ConcretePositionId)}
-                  >
-                    {bjjKnowledgeBase.positions[selectedPosition.inversePositionId].name}
-                  </button>
-                  <p className="text-xs text-gray-500 mt-1">
-                    View this position from the other perspective
-                  </p>
-                </div>
-              )}
-            </div>
+                        </Button>
+                      ))}
+                    </Stack>
+                  </Box>
+                )}
+                
+                {selectedPosition.inversePositionId && (
+                  <Box mt="sm" pt="sm" style={{ borderTop: '1px solid var(--mantine-color-divider)'}}>
+                    <Title order={5} mb="xs">Inverse Position:</Title>
+                     <Button
+                       variant="subtle"
+                       size="sm"
+                       onClick={() => handlePositionLink(selectedPosition.inversePositionId as ConcretePositionId)}
+                       style={{ whiteSpace: 'normal', height: 'auto' }}
+                     >
+                      {bjjKnowledgeBase.positions[selectedPosition.inversePositionId].name}
+                    </Button>
+                    <Text size="xs" c="dimmed" mt={4}>
+                      View this position from the other perspective
+                    </Text>
+                  </Box>
+                )}
+              </Stack>
+            </Paper>
           )}
 
           {selectedTechnique && (
-            <div>
-              <h2 className="font-bold text-xl mb-2">{selectedTechnique.name}</h2>
-              {selectedTechnique.aliases && selectedTechnique.aliases.length > 0 && (
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                  Also known as: {selectedTechnique.aliases.join(', ')}
-                </p>
-              )}
-              <div className="flex flex-wrap gap-2 mb-3">
-                <span className="inline-block bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 text-xs px-2 py-1 rounded">
-                  {selectedTechnique.type}
-                </span>
-                <span className="inline-block bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 text-xs px-2 py-1 rounded">
-                  {selectedTechnique.difficulty}
-                </span>
-                <span className="inline-block bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-100 text-xs px-2 py-1 rounded">
-                  {selectedTechnique.applicability}
-                </span>
-              </div>
-              
-              <div className="mb-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="font-semibold text-sm">Starting Position:</h3>
-                  <button
-                    type="button"
-                    className="text-sm text-indigo-600 hover:text-indigo-800 focus:outline-none underline"
-                    onClick={() => handlePositionLink(selectedTechnique.originPositionId)}
-                  >
-                    {bjjKnowledgeBase.positions[selectedTechnique.originPositionId].name}
-                  </button>
-                </div>
-              </div>
-              
-              <p className="text-sm mb-4">{selectedTechnique.description}</p>
-              
-              {selectedTechnique.steps && (
-                <div className="mb-4">
-                  <h3 className="font-semibold text-sm mb-1">Steps:</h3>
-                  <ol className="list-decimal list-inside text-sm">
-                    {selectedTechnique.steps.map((step) => (
-                      <li key={`step-${step.substring(0, 15)}`} className="mb-1">{step}</li>
-                    ))}
-                  </ol>
-                </div>
-              )}
-              
-              {selectedTechnique.outcomes && selectedTechnique.outcomes.length > 0 && (
-                <div className="mb-4">
-                  <h3 className="font-semibold text-sm mb-1">Possible Outcomes:</h3>
-                  <ul className="text-sm divide-y divide-gray-200 dark:divide-gray-700">
-                    {selectedTechnique.outcomes.map((outcome) => (
-                      <li key={`outcome-${outcome.type}-${outcome.endPositionId || ''}`} className="py-3">
-                        <div className="font-medium">{outcome.type}</div>
-                        <div className="mb-1">{outcome.description}</div>
-                        
-                        {outcome.endPositionId && (
-                          <div className="flex items-center mt-1">
-                            <span className="text-xs text-gray-500 mr-2">Position:</span>
-                            <button
-                              type="button"
-                              className="text-sm text-indigo-600 hover:text-indigo-800 focus:outline-none underline"
-                              onClick={() => handlePositionLink(outcome.endPositionId as ConcretePositionId)}
-                            >
-                              {bjjKnowledgeBase.positions[outcome.endPositionId].name}
-                            </button>
-                          </div>
-                        )}
-                        
-                        {outcome.likelihood && (
-                          <div className="text-xs text-gray-500 mt-1">Likelihood: {outcome.likelihood}</div>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              
-              {selectedTechnique.notes && (
-                <div className="mb-4">
-                  <h3 className="font-semibold text-sm mb-1">Notes:</h3>
-                  <p className="text-sm">{selectedTechnique.notes}</p>
-                </div>
-              )}
-            </div>
+             <Paper shadow="xs" p="md" withBorder>
+              <Stack>
+                <Title order={3}>{selectedTechnique.name}</Title>
+                 {selectedTechnique.aliases && selectedTechnique.aliases.length > 0 && (
+                  <Text size="sm" c="dimmed">
+                    Also known as: {selectedTechnique.aliases.join(', ')}
+                  </Text>
+                )}
+                 <Group gap="xs">
+                  <Badge color="green">{selectedTechnique.type}</Badge>
+                  <Badge color="yellow">{selectedTechnique.difficulty}</Badge>
+                  <Badge color="red">{selectedTechnique.applicability}</Badge>
+                </Group>
+                
+                <Box>
+                   <Group justify="space-between" align="center">
+                      <Title order={5}>Starting Position:</Title>
+                      <Button
+                         variant="subtle"
+                         size="sm"
+                         onClick={() => handlePositionLink(selectedTechnique.originPositionId)}
+                         style={{ whiteSpace: 'normal', height: 'auto' }}
+                      >
+                         {bjjKnowledgeBase.positions[selectedTechnique.originPositionId].name}
+                      </Button>
+                   </Group>
+                </Box>
+                
+                <Text size="sm">{selectedTechnique.description}</Text>
+                
+                {selectedTechnique.steps && (
+                  <Box>
+                    <Title order={5} mb="xs">Steps:</Title>
+                    <Stack component="ol" gap="xs">
+                      {selectedTechnique.steps.map((step, index) => (
+                        <Text component="li" size="sm" key={`step-${index}`}>{step}</Text>
+                      ))}
+                    </Stack>
+                  </Box>
+                )}
+                
+                {selectedTechnique.outcomes && selectedTechnique.outcomes.length > 0 && (
+                  <Box>
+                    <Title order={5} mb="xs">Possible Outcomes:</Title>
+                    <Stack gap="sm">
+                      {selectedTechnique.outcomes.map((outcome, index) => (
+                        <Paper key={`outcome-${index}`} p="xs" withBorder radius="sm">
+                          <Stack gap={4}>
+                            <Text fw={500} size="sm">{outcome.type}</Text>
+                            <Text size="sm">{outcome.description}</Text>
+                            {outcome.endPositionId && (
+                               <Group gap="xs" align="center">
+                                <Text size="xs" c="dimmed">Position:</Text>
+                                <Button
+                                   variant="subtle"
+                                   size="xs"
+                                   onClick={() => handlePositionLink(outcome.endPositionId as ConcretePositionId)}
+                                   style={{ whiteSpace: 'normal', height: 'auto' }}
+                                >
+                                  {bjjKnowledgeBase.positions[outcome.endPositionId].name}
+                                </Button>
+                               </Group>
+                            )}
+                            {outcome.likelihood && (
+                              <Text size="xs" c="dimmed">Likelihood: {outcome.likelihood}</Text>
+                            )}
+                          </Stack>
+                        </Paper>
+                      ))}
+                     </Stack>
+                  </Box>
+                )}
+                
+                {selectedTechnique.notes && (
+                  <Box>
+                    <Title order={5} mb="xs">Notes:</Title>
+                    <Text size="sm">{selectedTechnique.notes}</Text>
+                  </Box>
+                )}
+               </Stack>
+            </Paper>
           )}
 
           {!selectedPosition && !selectedTechnique && (
-            <div className="text-center py-8">
-              <p className="text-gray-500 dark:text-gray-400">
-                Select a position or technique to view details
-              </p>
-            </div>
+             <Paper p="xl" radius="md" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                <Text c="dimmed">
+                   Select a position or technique to view details
+                </Text>
+             </Paper>
           )}
-        </div>
-      </div>
-    </div>
+         </ScrollArea>
+      </AppShell.Aside>
+    </AppShell>
   );
 } 
