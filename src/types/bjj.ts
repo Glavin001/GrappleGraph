@@ -152,6 +152,7 @@ export type TechniqueEdgeData = {
   techniqueId: ConcreteTechniqueId;
   techniqueType: BjjTechniqueType;
   label: string;
+  isSetupEdge?: boolean; // Add optional flag for setup edges
 };
 
 // Optional: Define the full Node/Edge types using these data types
