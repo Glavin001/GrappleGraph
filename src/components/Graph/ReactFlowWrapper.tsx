@@ -14,13 +14,16 @@ import type {
   Edge, 
   ReactFlowInstance,
 } from 'reactflow';
-import { useNodesState, useEdgesState } from 'reactflow';
 import 'reactflow/dist/style.css';
-import dagre from 'dagre';
 
 import type { BjjTechniqueType, BjjDifficulty, BjjApplicability, BjjKnowledgeBase } from '../../types/bjj';
 import type { ConcretePositionId, ConcreteTechniqueId } from '../../data/bjj_knowledge_base';
 import { BjjTechniqueType as BJJ_TECHNIQUE_TYPE } from '../../types/bjj';
+
+// Import layout function from utility file
+import { getLayoutedElements } from '../../utils/graphLayout'; 
+// Import types from the central types file now
+import type { PositionNodeData, TechniqueEdgeData } from '../../types/bjj';
 
 // Helper function to generate a color from a string
 function stringToColor(str: string): string {
@@ -105,21 +108,6 @@ function darkenColor(color: string, amount: number): string {
   return color;
 }
 
-// Define custom node data type
-type PositionNodeData = {
-  label: string;
-  positionId: ConcretePositionId;
-  advantage?: string;
-  isVariant?: boolean;
-};
-
-// Define custom edge data type
-type TechniqueEdgeData = {
-  techniqueId: ConcreteTechniqueId;
-  techniqueType: BjjTechniqueType;
-  label: string;
-};
-
 interface ReactFlowWrapperProps {
   knowledgeBase: BjjKnowledgeBase<ConcretePositionId, ConcreteTechniqueId>;
   filters: {
@@ -155,55 +143,6 @@ const techniqueTypeColors: Record<BjjTechniqueType, string> = {
   [BJJ_TECHNIQUE_TYPE.GuardRecovery]: '#059669', // emerald-600
 };
 
-// DAG layout settings
-const dagreGraph = new dagre.graphlib.Graph();
-dagreGraph.setDefaultEdgeLabel(() => ({}));
-
-const getLayoutedElements = (
-  nodes: Node<PositionNodeData>[],
-  edges: Edge<TechniqueEdgeData>[],
-  direction = 'LR' // LR for horizontal, TB for vertical layout
-) => {
-  // Clear the graph before running the layout
-  dagreGraph.setGraph({});
-  
-  // Create a copy of the nodes and edges to avoid modifying the originals
-  const layoutNodes = nodes.map((node) => ({ ...node }));
-  const layoutEdges = edges.map((edge) => ({ ...edge }));
-
-  // Configure the layout algorithm
-  dagreGraph.setGraph({ rankdir: direction, ranksep: 150, nodesep: 100 });
-
-  // Add nodes to the graph
-  for (const node of layoutNodes) {
-    dagreGraph.setNode(node.id, { 
-      width: node.data.isVariant ? 150 : 180, 
-      height: 60 
-    });
-  }
-
-  // Add edges to the graph
-  for (const edge of layoutEdges) {
-    dagreGraph.setEdge(edge.source, edge.target);
-  }
-
-  // Run the layout algorithm
-  dagre.layout(dagreGraph);
-
-  // Apply the calculated positions to the nodes
-  for (const node of layoutNodes) {
-    const nodeWithPosition = dagreGraph.node(node.id);
-    
-    // Set the node position based on the layout algorithm
-    node.position = {
-      x: nodeWithPosition.x - (node.data.isVariant ? 150 : 180) / 2,
-      y: nodeWithPosition.y - 60 / 2,
-    };
-  }
-
-  return { layoutNodes, layoutEdges };
-};
-
 export default function ReactFlowWrapper({
   knowledgeBase,
   filters,
@@ -211,38 +150,29 @@ export default function ReactFlowWrapper({
   onEdgeClick,
   focusNode,
 }: ReactFlowWrapperProps) {
-  // State for base nodes and edges (before selection styling)
   const [baseNodes, setBaseNodes] = useState<Node<PositionNodeData>[]>([]);
   const [baseEdges, setBaseEdges] = useState<Edge<TechniqueEdgeData>[]>([]);
-  
-  // Replace useNodesState/useEdgesState with simple useState for base data
-  // const [nodes, setNodes, onNodesChange] = useNodesState<PositionNodeData>([]); // Remove
-  // const [edges, setEdges, onEdgesChange] = useEdgesState<TechniqueEdgeData>([]); // Remove
-  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null); // Use state for instance
-
+  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null); 
   const [loading, setLoading] = useState(true);
-  const [layoutDirection, setLayoutDirection] = useState<'LR' | 'TB'>('LR');
+  const [layoutDirection, setLayoutDirection] = useState<'RIGHT' | 'DOWN'>('RIGHT');
   const initializedRef = useRef(false);
   const reactFlowRef = useRef<HTMLDivElement>(null);
-  // const reactFlowInstanceRef = useRef<ReactFlowInstance | null>(null); // Remove ref, use state
 
-  // Generate graph data based on knowledge base and filters
-  const generateGraph = useCallback(() => {
+  // Generate graph data
+  const generateGraph = useCallback(async () => { 
     setLoading(true);
+    console.log("Generating graph data..."); // Debug start
     
     const initialNodes: Node<PositionNodeData>[] = [];
-    const initialEdges: Edge<TechniqueEdgeData>[] = [];
+    const edgeSet = new Map<string, Edge<TechniqueEdgeData>>();
     const includedPositions = new Set<ConcretePositionId>();
     
-    // Step 1: Create nodes for positions
+    // Step 1: Create nodes (Filter based on showVariants)
     for (const position of Object.values(knowledgeBase.positions)) {
-      // Apply filters
       if (!filters.showVariants && position.isVariant) {
         continue;
       }
-
       includedPositions.add(position.id);
-
       // Determine if this is a top or bottom position based on ID
       const isTopPosition = position.id.includes('-top');
       const isBottomPosition = position.id.includes('-bottom');
@@ -271,8 +201,8 @@ export default function ReactFlowWrapper({
 
       const node: Node<PositionNodeData> = {
         id: position.id,
-        type: 'default',
-        position: { x: 0, y: 0 }, // Will be calculated by Dagre
+        type: 'default', // Revert to default node type
+        position: { x: 0, y: 0 },
         data: {
           label: position.name,
           positionId: position.id,
@@ -283,79 +213,154 @@ export default function ReactFlowWrapper({
           background: backgroundColor,
           color: '#ffffff',
           borderRadius: '8px',
-          padding: '10px',
+          padding: '10px', // Add padding back
+          // Add width/height back for default nodes
           width: position.isVariant ? 150 : 180,
+          height: 60,
           fontSize: position.isVariant ? '12px' : '14px',
         },
       };
-
       initialNodes.push(node);
     }
+    console.log(`Created ${initialNodes.length} initial nodes representing ${includedPositions.size} positions.`);
 
-    // Step 2: Create edges for techniques
-    for (const technique of Object.values(knowledgeBase.techniques)) {
-      // Apply filters
-      if (filters.techniqueType !== 'all' && technique.type !== filters.techniqueType) {
-        continue;
-      }
+    // Step 2: Create edges based on applicable techniques and outcomes
+    console.log("Creating edges from applicable techniques and outcomes...");
+    
+    // --- Edge Creation Logic --- 
+    // Edges represent transitions between POSITIONS based on techniques.
+    // An edge is drawn FROM a visible starting position (node) TO a visible ending position 
+    // if a technique applicable FROM the starting position has an outcome leading TO the ending position.
+    // 
+    // Process:
+    // 1. Iterate through VISIBLE positions (`initialNodes`).
+    // 2. For each starting position, get its `applicableTechniqueIds` from the knowledge base.
+    // 3. For each applicable technique found:
+    //    a. Apply technique filters (type, difficulty, applicability).
+    //    b. Check the technique's `outcomes`.
+    //    c. If an outcome has an `endPositionId` AND that `endPositionId` corresponds to a VISIBLE position,
+    //       create a directed edge FROM the starting position TO the ending position.
+    // 
+    // * Important Note on Edge Visualization vs. Applicable Techniques:
+    //   The side panel lists *all* techniques defined in `applicableTechniqueIds` for a selected position.
+    //   However, the graph edges *only* visualize direct transitions *between position nodes*.
+    //   Therefore, an applicable technique WILL NOT have a corresponding edge drawn if:
+    //     a) Its outcome is not a position change (e.g., a 'Submission' outcome type often lacks an `endPositionId`).
+    //     b) Its outcome *does* lead to a position (`endPositionId` exists), but that target position node
+    //        is currently hidden due to active filters (e.g., "Show Position Variants" is off).
+    //   The graph edges strictly represent potential *positional changes* to other *visible* positions.
+    // ---------------------------
+    
+    for (const startNode of initialNodes) {
+        const startPositionId = startNode.data.positionId;
+        const positionData = knowledgeBase.positions[startPositionId];
 
-      if (filters.difficulty !== 'all' && technique.difficulty !== filters.difficulty) {
-        continue;
-      }
+        if (positionData?.applicableTechniqueIds) {
+            for (const techniqueId of positionData.applicableTechniqueIds) {
+                const technique = knowledgeBase.techniques[techniqueId];
+                if (!technique) continue; // Skip if technique not found
 
-      if (filters.applicability !== 'all' && technique.applicability !== filters.applicability) {
-        continue;
-      }
+                // Apply technique filters
+                if (filters.difficulty !== 'all' && technique.difficulty !== filters.difficulty) continue;
+                if (filters.applicability !== 'all' && technique.applicability !== filters.applicability) continue;
+                const isTransition = [
+                    BJJ_TECHNIQUE_TYPE.Sweep, BJJ_TECHNIQUE_TYPE.Escape, BJJ_TECHNIQUE_TYPE.Transition,
+                    BJJ_TECHNIQUE_TYPE.Takedown, BJJ_TECHNIQUE_TYPE.GuardPass, BJJ_TECHNIQUE_TYPE.GuardRecovery,
+                ].includes(technique.type);
+                if (filters.techniqueType !== 'all' && !isTransition && technique.type !== filters.techniqueType) {
+                    continue;
+                }
 
-      // For each outcome that results in a position change, create an edge
-      for (const [outcomeIndex, outcome] of technique.outcomes.entries()) {
-        if (outcome.endPositionId) {
-          // Only create edges between positions that are visible (passed filters)
-          if (includedPositions.has(technique.originPositionId) && includedPositions.has(outcome.endPositionId)) {
-            const edge: Edge<TechniqueEdgeData> = {
-              // Ensure unique edge ID by adding the outcome index
-              id: `${technique.id}-${outcome.endPositionId}-${outcomeIndex}`,
-              source: technique.originPositionId,
-              target: outcome.endPositionId,
-              animated: technique.type === BJJ_TECHNIQUE_TYPE.Submission,
-              style: {
-                stroke: techniqueTypeColors[technique.type] || '#888',
-                strokeWidth: 2,
-              },
-              type: 'smoothstep',
-              markerEnd: {
-                type: MarkerType.ArrowClosed,
-                width: 20,
-                height: 20,
-                color: techniqueTypeColors[technique.type] || '#888',
-              },
-              data: {
-                techniqueId: technique.id,
-                techniqueType: technique.type,
-                label: technique.name,
-              },
-              label: technique.name,
-              labelStyle: { fill: '#333', fontSize: 11 },
-              labelBgStyle: { fill: '#f9fafb', fillOpacity: 0.8 },
-              labelBgPadding: [4, 2],
-            };
-            initialEdges.push(edge);
-          }
+                // Check outcomes for end positions
+                for (const [outcomeIndex, outcome] of technique.outcomes.entries()) {
+                    if (outcome.endPositionId) {
+                        const endPositionId = outcome.endPositionId;
+                        // Ensure the target position is also visible
+                        if (includedPositions.has(endPositionId)) {
+                            const edgeId = `${startPositionId}-via-${technique.id}-to-${endPositionId}-${outcomeIndex}`;
+                            if (!edgeSet.has(edgeId)) {
+                                console.log(`  Edge: ${startPositionId} -> ${endPositionId} (via outcome of ${technique.name})`);
+                                const edge: Edge<TechniqueEdgeData> = {
+                                    id: edgeId,
+                                    source: startPositionId, // Edge originates from the node where technique is applicable
+                                    target: endPositionId,
+                                    animated: technique.type === BJJ_TECHNIQUE_TYPE.Submission, // Or maybe only for specific transitions?
+                                    style: { stroke: techniqueTypeColors[technique.type] || '#888', strokeWidth: 2 },
+                                    type: 'smoothstep',
+                                    markerEnd: { type: MarkerType.ArrowClosed, width: 20, height: 20, color: techniqueTypeColors[technique.type] || '#888' },
+                                    data: { techniqueId: technique.id, techniqueType: technique.type, label: technique.name },
+                                    label: technique.name,
+                                    labelStyle: { fill: '#333', fontSize: 11 },
+                                    labelBgStyle: { fill: '#f9fafb', fillOpacity: 0.8 },
+                                    labelBgPadding: [4, 2],
+                                };
+                                edgeSet.set(edgeId, edge);
+                            }
+                        }
+                    }
+                }
+            }
         }
-      }
     }
 
-    // Apply layout algorithm
-    const { layoutNodes, layoutEdges } = getLayoutedElements(initialNodes, initialEdges, layoutDirection);
+    // Step 3: Add edges from Setup Techniques (keep previous logic)
+    console.log("Creating edges from setup techniques...");
+    for (const technique of Object.values(knowledgeBase.techniques)) {
+        // Apply filters to the main technique as well, maybe?
+        // Or assume setup links are always relevant if both positions exist?
+        if (technique.setupTechniqueIds) {
+            for (const setupTechId of technique.setupTechniqueIds) {
+                const setupTechnique = knowledgeBase.techniques[setupTechId];
+                if (setupTechnique) {
+                    const setupSourcePosId = setupTechnique.originPositionId;
+                    const setupTargetPosId = technique.originPositionId;
+                    if (includedPositions.has(setupSourcePosId) && includedPositions.has(setupTargetPosId)) {
+                        const edgeId = `setup-${setupTechId}-to-${technique.id}`;
+                        if (!edgeSet.has(edgeId)) {
+                            console.log(`  Setup Edge: ${setupSourcePosId} -> ${setupTargetPosId} (via setup ${setupTechnique.name} for ${technique.name})`);
+                            const edge: Edge<TechniqueEdgeData> = {
+                                id: edgeId,
+                                source: setupSourcePosId,
+                                target: setupTargetPosId,
+                                style: { stroke: '#cccccc', strokeWidth: 1, strokeDasharray: '5, 5' }, 
+                                type: 'smoothstep',
+                                markerEnd: { type: MarkerType.ArrowClosed, width: 15, height: 15, color: '#cccccc' },
+                                data: { techniqueId: setupTechId, techniqueType: setupTechnique.type, label: `Setup: ${setupTechnique.name}` },
+                            };
+                            edgeSet.set(edgeId, edge);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    const initialEdges = Array.from(edgeSet.values());
+    console.log(`Created ${initialEdges.length} total edges.`);
 
-    setBaseNodes(layoutNodes); // Set base nodes
-    setBaseEdges(layoutEdges); // Set base edges
+    // Apply layout algorithm
+    const { layoutNodes, layoutEdges } = await getLayoutedElements(
+        initialNodes, 
+        initialEdges 
+    );
+
+    setBaseNodes(layoutNodes); 
+    setBaseEdges(layoutEdges); 
     setLoading(false);
     initializedRef.current = true;
-  }, [knowledgeBase, filters.techniqueType, filters.difficulty, filters.applicability, filters.showVariants, layoutDirection]); // Remove filters.selectedPositionId dependency
+    console.log("Graph generation complete.");
+
+  }, [
+      knowledgeBase, 
+      filters.techniqueType, 
+      filters.difficulty, 
+      filters.applicability, 
+      filters.showVariants, 
+  ]);
 
   // Update graph when base filters or layout direction change
   useEffect(() => {
+    // Call the async generateGraph function
     generateGraph();
   }, [generateGraph]);
 
@@ -397,26 +402,26 @@ export default function ReactFlowWrapper({
 
   // Store the ReactFlow instance when it's available
   const onInit = useCallback((instance: ReactFlowInstance) => {
-    // reactFlowInstanceRef.current = instance; // Use state instead
     setReactFlowInstance(instance);
   }, []);
 
   // Focus on a specific node when requested
   useEffect(() => {
-    if (!focusNode || !initializedRef.current || !reactFlowInstance) return; // Use state instance
+    if (!focusNode || !initializedRef.current || !reactFlowInstance || loading) return; 
     
-    // Use the memoized nodes for finding the node to focus
     const nodeToFocus = nodes.find(node => node.id === focusNode);
     
-    if (nodeToFocus) {
-      // Center view on the node with animation
-      const x = nodeToFocus.position.x + (nodeToFocus.data.isVariant ? 75 : 90);
-      const y = nodeToFocus.position.y + 30;
+    if (nodeToFocus?.position) { 
+      const width = nodeToFocus.data?.isVariant ? 150 : 180; // Get width from data/defaults
+      const height = 60; // Default height
+      const x = nodeToFocus.position.x + width / 2;
+      const y = nodeToFocus.position.y + height / 2;
       
-      // reactFlowInstanceRef.current.setCenter(x, y, { duration: 800, zoom: 1 }); // Use state instance
       reactFlowInstance.setCenter(x, y, { duration: 800, zoom: 1 });
+    } else if (nodeToFocus) {
+      reactFlowInstance.fitView({ duration: 800, nodes: [nodeToFocus] });
     }
-  }, [focusNode, nodes, reactFlowInstance]); // Depend on memoized nodes and state instance
+  }, [focusNode, nodes, reactFlowInstance, loading]);
 
   // Handle node click - show position details
   const handleNodeClick = useCallback(
@@ -438,32 +443,33 @@ export default function ReactFlowWrapper({
     [onEdgeClick]
   );
 
-  // Toggle layout direction
+  // Toggle layout direction using ELK values
   const toggleLayoutDirection = useCallback(() => {
-    setLayoutDirection(prev => prev === 'LR' ? 'TB' : 'LR');
+    setLayoutDirection(prev => prev === 'RIGHT' ? 'DOWN' : 'RIGHT');
   }, []);
 
   if (loading) {
-    return <div className="flex items-center justify-center h-full">Loading graph...</div>;
+    // Update loading text
+    return <div className="flex items-center justify-center h-full">Calculating graph layout...</div>;
   }
 
   return (
     <div className="h-full w-full" ref={reactFlowRef}>
       <ReactFlow
-        // Pass memoized nodes and edges
         nodes={nodes} 
         edges={edges}
-        // Remove onNodesChange/onEdgesChange as we manage state differently
-        // onNodesChange={onNodesChange} 
-        // onEdgesChange={onEdgesChange}
         onNodeClick={handleNodeClick}
         onEdgeClick={handleEdgeClick}
         onInit={onInit}
         connectionLineType={ConnectionLineType.SmoothStep}
-        defaultViewport={{ x: 0, y: 0, zoom: 0.5 }}
         minZoom={0.1}
         maxZoom={1.5}
-        fitView
+        // Fit view initially and on subsequent layouts (nodes/edges change)
+        fitView 
+        fitViewOptions={{ padding: 0.2 }} // Add more padding
+        // Nodes/edges are draggable by default, ensure this isn't disabled
+        nodesDraggable={false} // Prevent manual dragging if desired
+        nodesConnectable={false} // Prevent manual connection
       >
         <Controls />
         <MiniMap nodeStrokeWidth={3} zoomable pannable />
@@ -475,7 +481,8 @@ export default function ReactFlowWrapper({
             onClick={toggleLayoutDirection}
             className="bg-white dark:bg-gray-700 p-2 rounded shadow text-sm font-medium"
           >
-            {layoutDirection === 'LR' ? 'Switch to Vertical Layout' : 'Switch to Horizontal Layout'}
+            {/* Update button text based on ELK direction */}
+            {layoutDirection === 'RIGHT' ? 'Switch to Vertical Layout' : 'Switch to Horizontal Layout'}
           </button>
         </Panel>
       </ReactFlow>

@@ -1,3 +1,6 @@
+import type { Node, Edge } from 'reactflow'; // Add reactflow types if not already present
+import type { ConcretePositionId, ConcreteTechniqueId } from '../data/bjj_knowledge_base'; // Adjust path if needed
+
 export type PositionId<T extends string = string> = T; // Kebab-case unique identifier, e.g., "closed-guard"
 export type TechniqueId<T extends string = string> = T; // Kebab-case unique identifier, e.g., "closed-guard-cross-collar-choke"
 
@@ -133,3 +136,24 @@ export interface BjjKnowledgeBase<PID extends string = string, TID extends strin
   positions: Record<PositionId<PID>, Position<PID, TID>>;
   techniques: Record<TechniqueId<TID>, Technique<PID, TID>>;
 } 
+
+// --- Add Graph Specific Types --- 
+
+/** Custom React Flow node data for BJJ Positions */
+export type PositionNodeData = {
+  label: string;
+  positionId: ConcretePositionId;
+  advantage?: string;
+  isVariant?: boolean;
+};
+
+/** Custom React Flow edge data for BJJ Techniques */
+export type TechniqueEdgeData = {
+  techniqueId: ConcreteTechniqueId;
+  techniqueType: BjjTechniqueType;
+  label: string;
+};
+
+// Optional: Define the full Node/Edge types using these data types
+// export type BjjPositionNode = Node<PositionNodeData>;
+// export type BjjTechniqueEdge = Edge<TechniqueEdgeData>; 
