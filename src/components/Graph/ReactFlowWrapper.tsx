@@ -247,7 +247,8 @@ export default function ReactFlowWrapper({
             strokeDasharray: isSetup ? '5, 5' : undefined,
             opacity: !filters.selectedPositionId || isSelected ? 1 : 0.25, // Apply selection style here
         },
-        type: 'smoothstep',
+        // type: 'smoothstep', // Use default routing provided by ELK (orthogonal)
+        type: 'default',
         markerEnd: {
             type: MarkerType.ArrowClosed,
             width: isSetup ? 15 : 20,

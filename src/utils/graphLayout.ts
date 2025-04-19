@@ -12,13 +12,20 @@ const DEFAULT_NODE_HEIGHT = 60;
 const VARIANT_NODE_WIDTH = 150;
 const VARIANT_NODE_HEIGHT = 60;
 
-// Default ELK layout options - FORCE ALGORITHM
+// Default ELK layout options - LAYERED ALGORITHM with ORTHOGONAL routing
 const defaultLayoutOptions: LayoutOptions = {
-  'elk.algorithm': 'force',
-  // Increase spacing further
-  'org.eclipse.elk.spacing.nodeNode': '250', // Min distance between nodes
-  'org.eclipse.elk.force.idealEdgeLength': '250', // Preferred edge length
-  'org.eclipse.elk.edgeRouting': 'POLYLINE',
+  'elk.algorithm': 'layered',
+  'org.eclipse.elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF', // Good standard for layered
+  'org.eclipse.elk.edgeRouting': 'ORTHOGONAL',
+  // Spacing options for layered/orthogonal
+  'org.eclipse.elk.layered.spacing.nodeNodeBetweenLayers': '100', // Space between layers
+  'org.eclipse.elk.spacing.nodeNode': '80',                      // Space between nodes in the same layer
+  'org.eclipse.elk.layered.spacing.edgeNodeBetweenLayers': '50', // Space between edge and node vertically
+  'org.eclipse.elk.layered.spacing.edgeEdgeBetweenLayers': '50', // Space between edges vertically
+  'org.eclipse.elk.spacing.edgeNode': '50',                      // Space between edge and node horizontally
+  'org.eclipse.elk.spacing.edgeEdge': '50',                      // Space between edges horizontally
+  'org.eclipse.elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES', // Helps maintain some order
+  // 'elk.direction': 'RIGHT', // Explicitly set direction (can be changed via prop later if needed)
 };
 
 export const getLayoutedElements = async (
