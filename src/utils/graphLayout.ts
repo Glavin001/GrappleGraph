@@ -25,14 +25,14 @@ const defaultLayoutOptions: LayoutOptions = {
   'org.eclipse.elk.spacing.edgeNode': '50',                      // Space between edge and node horizontally
   'org.eclipse.elk.spacing.edgeEdge': '50',                      // Space between edges horizontally
   'org.eclipse.elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES', // Helps maintain some order
-  // 'elk.direction': 'RIGHT', // Explicitly set direction (can be changed via prop later if needed)
+  'elk.direction': 'DOWN', // Set default direction to DOWN
 };
 
 export const getLayoutedElements = async (
   nodes: Node<PositionNodeData>[],
   edges: Edge<TechniqueEdgeData>[],
   // Direction parameter is not used by force algorithm, keep signature for compatibility
-  direction: 'RIGHT' | 'DOWN' = 'RIGHT' 
+  direction: 'RIGHT' | 'DOWN' = 'DOWN' // Default to DOWN
 ): Promise<{ layoutNodes: Node<PositionNodeData>[], layoutEdges: Edge<TechniqueEdgeData>[] }> => {
   
   const elkNodes: ElkNode[] = nodes.map(node => ({
@@ -47,9 +47,15 @@ export const getLayoutedElements = async (
     targets: [edge.target],
   }));
 
+  // Pass the direction to the layout options
+  const layoutOptions = {
+      ...defaultLayoutOptions,
+      // 'elk.direction': direction // Apply the direction passed as argument (already set in defaults now)
+  };
+  
   const graphToLayout: ElkNode = {
     id: 'root',
-    layoutOptions: defaultLayoutOptions,
+    layoutOptions: layoutOptions, // Use potentially modified options
     children: elkNodes,
     edges: elkEdges,
   };

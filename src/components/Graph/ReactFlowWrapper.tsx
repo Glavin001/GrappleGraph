@@ -152,7 +152,6 @@ export default function ReactFlowWrapper({
   const [baseEdges, setBaseEdges] = useState<Edge<TechniqueEdgeData>[]>([]);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null); 
   const [loading, setLoading] = useState(true);
-  const [layoutDirection, setLayoutDirection] = useState<'RIGHT' | 'DOWN'>('RIGHT');
   const initializedRef = useRef(false);
   const reactFlowRef = useRef<HTMLDivElement>(null);
 
@@ -309,11 +308,6 @@ export default function ReactFlowWrapper({
     [onEdgeClick]
   );
 
-  // Toggle layout direction using ELK values
-  const toggleLayoutDirection = useCallback(() => {
-    setLayoutDirection(prev => prev === 'RIGHT' ? 'DOWN' : 'RIGHT');
-  }, []);
-
   if (loading) {
     // Update loading text
     return <div className="flex items-center justify-center h-full">Calculating graph layout...</div>;
@@ -340,17 +334,6 @@ export default function ReactFlowWrapper({
         <Controls />
         <MiniMap nodeStrokeWidth={3} zoomable pannable />
         <Background gap={12} size={1} />
-        
-        <Panel position="top-right">
-          <button
-            type="button"
-            onClick={toggleLayoutDirection}
-            className="bg-white dark:bg-gray-700 p-2 rounded shadow text-sm font-medium"
-          >
-            {/* Update button text based on ELK direction */}
-            {layoutDirection === 'RIGHT' ? 'Switch to Vertical Layout' : 'Switch to Horizontal Layout'}
-          </button>
-        </Panel>
       </ReactFlow>
     </div>
   );
